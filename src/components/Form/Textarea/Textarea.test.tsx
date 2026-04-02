@@ -1,0 +1,41 @@
+import { render, screen } from '@testing-library/react';
+import { describe, it, expect } from 'vitest';
+import { Textarea } from './Textarea';
+
+describe('Textarea', () => {
+  it('renders with a label', () => {
+    render(<Textarea label="Bio" />);
+    expect(screen.getByLabelText('Bio')).toBeInTheDocument();
+  });
+
+  it('renders as a textarea element', () => {
+    render(<Textarea label="Bio" />);
+    expect(screen.getByLabelText('Bio').tagName).toBe('TEXTAREA');
+  });
+
+  it('shows error message', () => {
+    render(<Textarea label="Bio" error="Required" />);
+    expect(screen.getByText('Required')).toBeInTheDocument();
+  });
+
+  it('sets aria-invalid when error is present', () => {
+    render(<Textarea label="Bio" error="Required" />);
+    expect(screen.getByLabelText('Bio')).toHaveAttribute('aria-invalid', 'true');
+  });
+
+  it('shows helper text', () => {
+    render(<Textarea label="Bio" helperText="Max 500 chars" />);
+    expect(screen.getByText('Max 500 chars')).toBeInTheDocument();
+  });
+
+  it('shows character count when maxLength and value are set', () => {
+    render(<Textarea label="Bio" maxLength={200} value="Hello" onChange={() => {}} />);
+    expect(screen.getByText('5/200')).toBeInTheDocument();
+  });
+
+  it('is disabled when disabled prop is set', () => {
+    render(<Textarea label="Bio" disabled />);
+    expect(screen.getByLabelText('Bio')).toBeDisabled();
+  });
+});
+

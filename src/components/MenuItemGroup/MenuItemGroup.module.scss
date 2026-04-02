@@ -1,0 +1,90 @@
+@use '../../styles/mixins' as *;
+
+.group {
+  display: flex;
+  flex-direction: column;
+}
+
+.trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: var(--space-2) var(--space-4);
+  border: none;
+  background: transparent;
+  font-family: var(--font-family);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  transition:
+    color var(--transition-fast),
+    background-color var(--transition-fast);
+
+  @include focus-ring;
+
+  &:hover {
+    color: var(--color-text-primary);
+    background-color: var(--color-surface);
+  }
+}
+
+.triggerLabel {
+  @include truncate;
+}
+
+.chevron {
+  flex-shrink: 0;
+  font-size: var(--font-size-xs);
+  line-height: 1;
+  display: inline-block;
+  transition: transform var(--transition-fast);
+
+  @include reduced-motion {
+    transition: none;
+  }
+}
+
+.chevronOpen {
+  transform: rotate(90deg);
+}
+
+.staticLabel {
+  display: block;
+  padding: var(--space-2) var(--space-4);
+  font-family: var(--font-family);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+}
+
+/* Animated content wrapper using CSS grid trick for smooth height */
+.contentWrapper {
+  display: grid;
+  transition: grid-template-rows var(--transition-normal);
+  overflow: hidden;
+
+  @include reduced-motion {
+    transition: none;
+  }
+}
+
+.open {
+  grid-template-rows: 1fr;
+}
+
+.closed {
+  grid-template-rows: 0fr;
+}
+
+.content {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  padding-left: var(--space-2);
+  min-height: 0; /* required for the grid animation trick */
+  overflow: hidden;
+}
+

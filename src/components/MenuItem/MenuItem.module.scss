@@ -1,0 +1,77 @@
+@use '../../styles/mixins' as *;
+
+.item {
+  list-style: none;
+}
+
+.link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  padding: var(--space-2) var(--space-4);
+  border: none;
+  border-left: 3px solid transparent;
+  background: transparent;
+  font-family: var(--font-family);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-primary);
+  text-decoration: none;
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast),
+    border-color var(--transition-fast);
+
+  @include focus-ring;
+
+  &:hover {
+    background-color: var(--color-surface);
+    color: var(--color-primary);
+    border-left-color: var(--color-primary);
+  }
+
+  &:active {
+    background-color: var(--color-surface-raised);
+  }
+}
+
+.active .link {
+  color: var(--color-primary);
+  background-color: var(--color-surface);
+  font-weight: var(--font-weight-medium);
+  border-left-color: var(--color-primary);
+}
+
+.disabled .link {
+  color: var(--color-text-disabled);
+  cursor: not-allowed;
+
+  &:hover {
+    background-color: transparent;
+    color: var(--color-text-disabled);
+    border-left-color: transparent;
+  }
+}
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
+  transition: color var(--transition-fast);
+
+  .link:hover & {
+    color: var(--color-primary);
+  }
+}
+
+.label {
+  @include truncate;
+}
+

@@ -1,0 +1,24 @@
+@use '../../styles/mixins' as *;
+
+.textLink {
+  color: var(--color-primary);
+  text-decoration: none;
+  cursor: pointer;
+  transition: color var(--transition-fast);
+
+  @include focus-ring;
+
+  &:hover {
+    text-decoration: underline;
+    color: var(--color-primary-hover);
+  }
+
+  &:active {
+    color: var(--color-primary-active);
+  }
+}
+
+.srOnly {
+  @include sr-only;
+}
+

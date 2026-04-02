@@ -1,0 +1,83 @@
+@use '../../styles/mixins' as *;
+
+.wrapper {
+  display: block;
+
+  @include breakpoint-lg {
+    display: none;
+  }
+}
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  padding: var(--space-2);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  transition: background-color var(--transition-fast);
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+
+  @include focus-ring;
+
+  &:hover {
+    background-color: var(--color-surface);
+  }
+}
+
+.hamburgerIcon {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--color-overlay);
+  z-index: var(--z-index-dialog);
+}
+
+.panel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: min(300px, 80vw);
+  background-color: var(--color-surface);
+  box-shadow: var(--shadow-xl);
+  z-index: calc(var(--z-index-dialog) + 1);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  transform: translateX(0);
+
+  @include reduced-motion {
+    animation: none;
+  }
+}
+
+.panelHeader {
+  display: flex;
+  justify-content: flex-end;
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.panelContent {
+  flex: 1;
+  overflow-y: auto;
+
+  /* Override SideMenu display:none so it shows inside hamburger panel */
+  :global {
+    nav {
+      display: block !important;
+      width: 100% !important;
+      border-right: none !important;
+    }
+  }
+}
+

@@ -1,0 +1,89 @@
+{
+  "name": "@pigna/component-library",
+  "version": "0.1.0",
+  "description": "A generic, accessible React component library with dark/light theme support.",
+  "type": "module",
+  "main": "./dist/component-library.cjs",
+  "module": "./dist/component-library.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/component-library.js",
+      "require": "./dist/component-library.cjs"
+    },
+    "./styles": "./dist/styles.css"
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": [
+    "**/*.scss",
+    "**/*.css"
+  ],
+  "scripts": {
+    "dev": "storybook dev -p 6006",
+    "build": "tsc -b && vite build && sass src/styles/global.scss dist/styles.css --style=compressed --no-source-map",
+    "build:storybook": "storybook build",
+    "lint": "eslint src/",
+    "lint:fix": "eslint src/ --fix",
+    "lint:styles": "stylelint \"src/**/*.scss\"",
+    "format": "prettier --write \"src/**/*.{ts,tsx,scss,json,md}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,scss,json,md}\"",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "prepublishOnly": "npm run lint && npm run test && npm run build"
+  },
+  "peerDependencies": {
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.4",
+    "@storybook/addon-a11y": "^10.3.4",
+    "@storybook/addon-docs": "^10.3.4",
+    "@storybook/react-vite": "^10.3.4",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/node": "^24.12.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
+    "eslint": "^9.39.4",
+    "eslint-plugin-jsx-a11y": "^6.10.0",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-storybook": "^10.3.4",
+    "globals": "^17.4.0",
+    "jsdom": "^26.1.0",
+    "prettier": "^3.5.3",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "sass": "^1.89.0",
+    "storybook": "^10.3.4",
+    "stylelint": "^16.20.0",
+    "stylelint-config-standard-scss": "^14.0.0",
+    "typescript": "~5.9.3",
+    "typescript-eslint": "^8.57.0",
+    "vite": "^8.0.1",
+    "vite-plugin-dts": "^4.5.4",
+    "vitest": "^3.2.4"
+  },
+  "engines": {
+    "node": ">=20.19.0 || >=22.12.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Pigna/Component-Library.git"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "license": "MIT",
+  "browserslist": [
+    "last 2 Chrome versions",
+    "last 2 Edge versions",
+    "last 2 Firefox versions",
+    "last 2 Safari versions"
+  ]
+}

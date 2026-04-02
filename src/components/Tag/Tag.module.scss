@@ -1,0 +1,36 @@
+@use '../../styles/mixins' as *;
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-3);
+  background-color: var(--tag-color, var(--color-surface));
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  font-family: var(--font-family);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-tight);
+  color: var(--color-text-primary);
+  white-space: nowrap;
+}
+
+/* When a custom --tag-color is set, reduce its opacity for the background */
+.tag[style*='--tag-color'] {
+  background-color: color-mix(in srgb, var(--tag-color) 15%, transparent);
+  border-color: color-mix(in srgb, var(--tag-color) 30%, transparent);
+}
+
+.label {
+  display: inline-block;
+}
+
+.link {
+  font-size: inherit;
+}
+
+.remove {
+  margin-left: var(--space-1);
+  margin-right: calc(var(--space-1) * -1);
+}
+

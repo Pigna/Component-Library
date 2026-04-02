@@ -1,0 +1,81 @@
+/* ==========================================================================
+   Mixins
+   Reusable SCSS mixins for responsive design, accessibility, and utilities.
+   ========================================================================== */
+
+/* --- Mobile-first breakpoints (min-width) --- */
+
+$breakpoint-sm: 480px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 1024px;
+$breakpoint-xl: 1280px;
+
+@mixin breakpoint-sm {
+  @media (min-width: $breakpoint-sm) {
+    @content;
+  }
+}
+
+@mixin breakpoint-md {
+  @media (min-width: $breakpoint-md) {
+    @content;
+  }
+}
+
+@mixin breakpoint-lg {
+  @media (min-width: $breakpoint-lg) {
+    @content;
+  }
+}
+
+@mixin breakpoint-xl {
+  @media (min-width: $breakpoint-xl) {
+    @content;
+  }
+}
+
+/* --- Focus ring ---
+   Uses :focus-visible so focus styles only show for keyboard navigation,
+   not mouse clicks. This is WCAG 2.4.7 compliant. */
+
+@mixin focus-ring {
+  &:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+  }
+}
+
+/* --- Screen reader only ---
+   Visually hides content while keeping it accessible to screen readers.
+   Based on the established sr-only pattern. */
+
+@mixin sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* --- Reduced motion ---
+   Wraps content that should be disabled when the user prefers reduced motion.
+   WCAG 2.3.3 compliance. */
+
+@mixin reduced-motion {
+  @media (prefers-reduced-motion: reduce) {
+    @content;
+  }
+}
+
+/* --- Truncate text --- */
+
+@mixin truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+

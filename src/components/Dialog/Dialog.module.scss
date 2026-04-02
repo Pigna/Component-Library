@@ -1,0 +1,77 @@
+@use '../../styles/mixins' as *;
+
+.dialog {
+  border: none;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  max-width: 100vw;
+  max-height: 100vh;
+  width: 100vw;
+  height: 100vh;
+  overflow: visible;
+
+  &::backdrop {
+    background: var(--color-overlay);
+  }
+
+  @include breakpoint-sm {
+    width: auto;
+    height: auto;
+    max-width: min(32rem, calc(100vw - var(--space-8)));
+    margin: auto;
+    border-radius: var(--radius-xl);
+  }
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-surface-raised);
+  box-shadow: var(--shadow-xl);
+  min-height: 100vh;
+  max-height: 100vh;
+  overflow-y: auto;
+
+  @include breakpoint-sm {
+    min-height: auto;
+    max-height: calc(100vh - var(--space-12));
+    border-radius: var(--radius-xl);
+  }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-6);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-family);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  line-height: var(--line-height-tight);
+}
+
+.content {
+  flex: 1;
+  padding: var(--space-4) var(--space-6);
+  font-family: var(--font-family);
+  font-size: var(--font-size-md);
+  color: var(--color-text-primary);
+  line-height: var(--line-height-normal);
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-6);
+  border-top: 1px solid var(--color-border);
+}
+

@@ -1,0 +1,49 @@
+@use '../../styles/mixins' as *;
+
+.breadcrumb {
+  font-family: var(--font-family);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.list {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: var(--space-2);
+}
+
+.entry {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  white-space: nowrap;
+}
+
+.item {
+  display: contents;
+}
+
+.separator {
+  color: var(--color-text-secondary);
+  user-select: none;
+}
+
+.current {
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-semibold);
+
+  @include truncate;
+
+  max-width: 200px;
+
+  @include breakpoint-md {
+    max-width: none;
+  }
+}
+
