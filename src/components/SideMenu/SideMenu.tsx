@@ -1,4 +1,4 @@
-import { type HTMLAttributes, type ReactNode, type Ref, useState, useCallback } from 'react';
+import {type HTMLAttributes, type ReactNode, type Ref, useCallback, useState} from 'react';
 import styles from './SideMenu.module.scss';
 
 export interface SideMenuProps extends HTMLAttributes<HTMLElement> {
@@ -27,9 +27,6 @@ export interface SideMenuProps extends HTMLAttributes<HTMLElement> {
  * ```tsx
  * <SideMenu collapsible>
  *   <MenuItem href="/dashboard" icon={<DashIcon />} active>Dashboard</MenuItem>
- *   <MenuItemGroup label="Settings">
- *     <MenuItem href="/profile">Profile</MenuItem>
- *   </MenuItemGroup>
  * </SideMenu>
  * ```
  */

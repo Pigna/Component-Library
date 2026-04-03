@@ -2,6 +2,7 @@ import {
   type HTMLAttributes,
   type ReactNode,
   type Ref,
+  type CSSProperties,
   useState,
   useMemo,
   useCallback,
@@ -48,16 +49,18 @@ export interface TableProps<T = Record<string, unknown>> extends HTMLAttributes<
   pageSize?: number;
   /** Custom table color accent. */
   accentColor?: string;
+  /** Custom header background color. */
+  headerColor?: string;
+  /** Custom header text color. */
+  headerTextColor?: string;
+  /** Enable row selection on click. */
+  selectable?: boolean;
+  /** Derive a stable string key from a row — prevents DOM thrash on sort/filter. Defaults to row index. */
+  rowKey?: (row: T, index: number) => string;
   /** Accessible caption for the table. */
   caption?: string;
   /** Footer content. */
   footer?: ReactNode;
-  /** Background color for column headers. */
-  headerColor?: string;
-  /** Text color for column headers (use with dark headerColor). */
-  headerTextColor?: string;
-  /** Enable row selection highlight on click. */
-  selectable?: boolean;
 }
 
 /**
@@ -89,11 +92,12 @@ export function Table<T extends Record<string, unknown> = Record<string, unknown
   paginated = false,
   pageSize = 10,
   accentColor,
-  caption,
-  footer,
   headerColor,
   headerTextColor,
   selectable = false,
+  rowKey,
+  caption,
+  footer,
   className,
   ref,
   ...rest
@@ -161,18 +165,19 @@ export function Table<T extends Record<string, unknown> = Record<string, unknown
     [],
   );
 
-  const classNames = [styles.wrapper, className].filter(Boolean).join(' ');
-  const tableStyle = {
-    ...(accentColor ? { '--table-accent': accentColor } : {}),
-    ...(headerColor ? { '--table-header-bg': headerColor } : {}),
-    ...(headerTextColor ? { '--table-header-color': headerTextColor } : {}),
-  } as React.CSSProperties;
-
+  /* Aria sort value */
   const ariaSort = (col: TableColumn<T>): 'ascending' | 'descending' | 'none' | undefined => {
     if (!col.sortable) return undefined;
     if (sortKey !== col.key || sortDir === 'none') return 'none';
     return sortDir === 'asc' ? 'ascending' : 'descending';
   };
+
+  const classNames = [styles.wrapper, className].filter(Boolean).join(' ');
+  const tableStyle = {
+    ...(accentColor ? { '--table-accent': accentColor } : {}),
+    ...(headerColor ? { '--table-header-bg': headerColor } : {}),
+    ...(headerTextColor ? { '--table-header-color': headerTextColor } : {}),
+  } as CSSProperties;
 
   return (
     <div ref={ref} className={classNames} {...rest}>
@@ -238,10 +243,12 @@ export function Table<T extends Record<string, unknown> = Record<string, unknown
                     )}
                   </span>
                   {col.resizable && (
-                    <span
+                    <button
+                      type="button"
                       className={styles.resizeHandle}
-                      role="separator"
-                      aria-orientation="vertical"
+                      aria-label={`Resize ${col.label} column`}
+                      tabIndex={-1}
+                      onClick={(e) => e.preventDefault()}
                       onMouseDown={(e) => {
                         const th = (e.target as HTMLElement).closest('th');
                         if (th) {
@@ -264,16 +271,18 @@ export function Table<T extends Record<string, unknown> = Record<string, unknown
             ) : (
               paged.map((row, rowIdx) => {
                 const globalIdx = paginated ? page * pageSize + rowIdx : rowIdx;
+                const key = rowKey ? rowKey(row, globalIdx) : String(globalIdx);
                 return (
                   <tr
-                    key={rowIdx}
+                    key={key}
                     className={[
                       styles.tr,
                       selectable ? styles.selectable : '',
                       selectable && selectedRow === globalIdx ? styles.selected : '',
-                    ].filter(Boolean).join(' ')}
+                    ]
+                      .filter(Boolean)
+                      .join(' ')}
                     onClick={selectable ? () => setSelectedRow(globalIdx) : undefined}
-                    aria-selected={selectable ? selectedRow === globalIdx : undefined}
                   >
                     {columns.map((col) => (
                       <td key={col.key} className={styles.td}>
@@ -285,13 +294,7 @@ export function Table<T extends Record<string, unknown> = Record<string, unknown
               })
             )}
           </tbody>
-          {footer && (
-            <tfoot className={styles.tfoot}>
-              <tr>
-                <td colSpan={columns.length}>{footer}</td>
-              </tr>
-            </tfoot>
-          )}
+          {footer && <tfoot className={styles.tfoot}><tr><td colSpan={columns.length}>{footer}</td></tr></tfoot>}
         </table>
       </div>
 
@@ -300,7 +303,7 @@ export function Table<T extends Record<string, unknown> = Record<string, unknown
           <button
             type="button"
             className={styles.pageButton}
-            disabled={page === 0}
+            disabled={page <= 0}
             onClick={() => setPage((p) => p - 1)}
             aria-label="Previous page"
           >
@@ -323,4 +326,3 @@ export function Table<T extends Record<string, unknown> = Record<string, unknown
     </div>
   );
 }
-

@@ -47,7 +47,7 @@ export function Toggle({
           id={inputId}
           type="checkbox"
           role="switch"
-          aria-checked={checked}
+          aria-checked={isOn}
           className={styles.input}
           checked={checked}
           defaultChecked={defaultChecked}

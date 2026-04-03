@@ -1,4 +1,14 @@
-import { type ReactNode, type Ref, type HTMLAttributes, useEffect, useRef, useCallback } from 'react';
+import {
+  type ReactNode,
+  type Ref,
+  type HTMLAttributes,
+  type RefObject,
+  type SyntheticEvent,
+  type KeyboardEvent,
+  useEffect,
+  useRef,
+  useCallback,
+} from 'react';
 import { CloseButton } from '../CloseButton';
 import { Button } from '../Button';
 import styles from './Dialog.module.scss';
@@ -58,7 +68,7 @@ export function Dialog({
       internalRef.current = node;
       if (typeof ref === 'function') ref(node);
       else if (ref && typeof ref === 'object') {
-        (ref as React.MutableRefObject<HTMLDialogElement | null>).current = node;
+        (ref as RefObject<HTMLDialogElement | null>).current = node;
       }
     },
     [ref],
@@ -76,18 +86,16 @@ export function Dialog({
   }, [open]);
 
   const handleCancel = useCallback(
-    (e: React.SyntheticEvent) => {
+    (e: SyntheticEvent) => {
       e.preventDefault();
       onClose();
     },
     [onClose],
   );
 
-  const handleBackdropClick = useCallback(
-    (e: React.MouseEvent<HTMLDialogElement>) => {
-      if (e.target === internalRef.current) {
-        onClose();
-      }
+  const handleBackdropKey = useCallback(
+    (e: KeyboardEvent<HTMLButtonElement>) => {
+      if (e.key === 'Escape') onClose();
     },
     [onClose],
   );
@@ -106,12 +114,23 @@ export function Dialog({
       ref={setRef}
       className={classNames}
       onCancel={handleCancel}
-      onClick={handleBackdropClick}
       aria-labelledby={titleId}
       aria-describedby={contentId}
       {...rest}
     >
-      <div className={styles.panel} onClick={(e) => e.stopPropagation()}>
+      {/*
+       * Backdrop button: captures mouse clicks outside the panel to close the dialog.
+       * tabIndex={-1} keeps it out of the tab order; keyboard users rely on Escape (onCancel).
+       */}
+      <button
+        type="button"
+        className={styles.backdropOverlay}
+        aria-hidden="true"
+        tabIndex={-1}
+        onClick={onClose}
+        onKeyDown={handleBackdropKey}
+      />
+      <div role="document" className={styles.panel}>
         <header className={styles.header}>
           <h2 id={titleId} className={styles.title}>
             {title}

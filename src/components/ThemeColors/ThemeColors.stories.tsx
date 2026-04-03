@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 import styles from './ThemeColors.module.scss';
 
 interface TokenSwatch {
@@ -29,20 +29,14 @@ const tokenGroups: Record<string, string[]> = {
 };
 
 function useComputedTokens(vars: string[]): TokenSwatch[] {
-  const [tokens, setTokens] = useState<TokenSwatch[]>([]);
-
-  useEffect(() => {
-    const root = document.documentElement;
-    const computed = getComputedStyle(root);
-    setTokens(
-      vars.map((v) => ({
-        varName: v,
-        value: computed.getPropertyValue(v).trim() || '—',
-      })),
-    );
+  return useMemo(() => {
+    if (typeof document === 'undefined') return [];
+    const computed = getComputedStyle(document.documentElement);
+    return vars.map((v) => ({
+      varName: v,
+      value: computed.getPropertyValue(v).trim() || '—',
+    }));
   }, [vars]);
-
-  return tokens;
 }
 
 function SwatchGrid({ title, vars }: { title: string; vars: string[] }) {

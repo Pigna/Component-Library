@@ -44,6 +44,9 @@ export type { BreadcrumbProps, BreadcrumbItemProps } from './components/Breadcru
 export { Popover } from './components/Popover';
 export type { PopoverProps, PopoverPlacement } from './components/Popover';
 
+export { ConfirmPopover } from './components/ConfirmPopover';
+export type { ConfirmPopoverProps } from './components/ConfirmPopover';
+
 export { ProgressIndicator } from './components/ProgressIndicator';
 export type { ProgressIndicatorProps, ProgressVariant, ProgressDisplayMode } from './components/ProgressIndicator';
 

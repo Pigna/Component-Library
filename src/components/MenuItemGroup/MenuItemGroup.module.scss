@@ -19,9 +19,7 @@
   color: var(--color-text-secondary);
   cursor: pointer;
   border-radius: var(--radius-md);
-  transition:
-    color var(--transition-fast),
-    background-color var(--transition-fast);
+  transition: color var(--transition-fast);
 
   @include focus-ring;
 
@@ -40,20 +38,6 @@
   font-size: var(--font-size-xs);
   line-height: 1;
   display: inline-block;
-  transition: transform var(--transition-fast);
-
-  @include reduced-motion {
-    transition: none;
-  }
-}
-
-.chevronOpen {
-  transform: rotate(90deg);
-}
-
-.staticLabel {
-  display: block;
-  padding: var(--space-2) var(--space-4);
   font-family: var(--font-family);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-semibold);

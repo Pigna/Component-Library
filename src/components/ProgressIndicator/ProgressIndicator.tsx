@@ -71,30 +71,28 @@ export function ProgressIndicator({
         aria-label={label}
         {...rest}
       >
-        <div className={styles.circleWrapper}>
-          <svg className={styles.circleSvg} viewBox="0 0 100 100">
-            <circle
-              className={styles.circleTrack}
-              cx="50"
-              cy="50"
-              r={CIRCLE_RADIUS}
-              fill="none"
-              strokeWidth="8"
-            />
-            <circle
-              className={styles.circleFill}
-              cx="50"
-              cy="50"
-              r={CIRCLE_RADIUS}
-              fill="none"
-              strokeWidth="8"
-              strokeLinecap="round"
-              strokeDasharray={CIRCLE_CIRCUMFERENCE}
-              strokeDashoffset={offset}
-            />
-          </svg>
-          <span className={styles.circleText}>{displayText}</span>
-        </div>
+        <svg className={styles.circleSvg} viewBox="0 0 100 100">
+          <circle
+            className={styles.circleTrack}
+            cx="50"
+            cy="50"
+            r={CIRCLE_RADIUS}
+            fill="none"
+            strokeWidth="8"
+          />
+          <circle
+            className={styles.circleFill}
+            cx="50"
+            cy="50"
+            r={CIRCLE_RADIUS}
+            fill="none"
+            strokeWidth="8"
+            strokeLinecap="round"
+            strokeDasharray={CIRCLE_CIRCUMFERENCE}
+            strokeDashoffset={offset}
+          />
+        </svg>
+        <span className={styles.circleText}>{displayText}</span>
       </div>
     );
   }

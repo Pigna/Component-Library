@@ -24,7 +24,20 @@
   }
 }
 
+.backdropOverlay {
+  position: fixed;
+  inset: 0;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: default;
+  z-index: 0;
+}
+
 .panel {
+  position: relative;
+  z-index: 1;
+  // ...existing code...
   display: flex;
   flex-direction: column;
   background-color: var(--color-surface-raised);

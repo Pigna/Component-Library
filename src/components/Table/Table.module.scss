@@ -139,19 +139,6 @@
 
 .selected {
   background-color: color-mix(in srgb, var(--table-accent, var(--color-primary)) 12%, transparent) !important;
-  outline: 2px solid var(--table-accent, var(--color-primary));
-  outline-offset: -2px;
-}
-
-/* --- Footer --- */
-
-.tfoot {
-  border-top: 2px solid var(--table-accent, var(--color-border));
-
-  td {
-    padding: var(--space-3) var(--space-4);
-    font-weight: var(--font-weight-medium);
-  }
 }
 
 /* --- Striping --- */
@@ -164,6 +151,17 @@
   .th:nth-child(even),
   .td:nth-child(even) {
     background-color: var(--color-surface);
+  }
+}
+
+/* --- Footer --- */
+
+.tfoot {
+  border-top: 2px solid var(--table-accent, var(--color-border));
+
+  td {
+    padding: var(--space-3) var(--space-4);
+    font-weight: var(--font-weight-medium);
   }
 }
 
