@@ -85,3 +85,9 @@
   user-select: none;
 }
 
+.errorMessage {
+  font-size: var(--font-size-sm);
+  color: var(--color-error);
+  line-height: var(--line-height-normal);
+}
+

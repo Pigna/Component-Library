@@ -44,5 +44,25 @@ describe('Toggle', () => {
     render(<Toggle label="Sync" onText="On" offText="Off" />);
     expect(screen.getByText('Off')).toBeInTheDocument();
   });
+
+  it('aria-checked reflects state after click in uncontrolled mode', async () => {
+    render(<Toggle label="Toggle" />);
+    const toggle = screen.getByRole('switch');
+    expect(toggle).toHaveAttribute('aria-checked', 'false');
+    await userEvent.click(toggle);
+    expect(toggle).toHaveAttribute('aria-checked', 'true');
+    await userEvent.click(toggle);
+    expect(toggle).toHaveAttribute('aria-checked', 'false');
+  });
+
+  it('shows error message', () => {
+    render(<Toggle label="Accept" error="You must accept" />);
+    expect(screen.getByText('You must accept')).toBeInTheDocument();
+  });
+
+  it('sets aria-invalid when error is present', () => {
+    render(<Toggle label="Accept" error="Required" />);
+    expect(screen.getByRole('switch')).toHaveAttribute('aria-invalid', 'true');
+  });
 });
 

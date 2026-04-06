@@ -68,7 +68,7 @@ export function RadioGroup({
       {...rest}
     >
       <legend className={styles.legend}>{legend}</legend>
-      <div className={groupClasses} role="radiogroup">
+      <div className={groupClasses}>
         {options.map((opt) => (
           <label
             key={opt.value}
@@ -84,6 +84,7 @@ export function RadioGroup({
               disabled={opt.disabled}
               onChange={() => onChange?.(opt.value)}
               className={styles.radio}
+              aria-describedby={error ? errorId : undefined}
             />
             <span className={styles.label}>{opt.label}</span>
           </label>

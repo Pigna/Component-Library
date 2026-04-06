@@ -45,19 +45,20 @@ describe('FormField', () => {
     expect(screen.getByText('Enter your email')).toBeInTheDocument();
   });
 
-  it('hides helper text when error is present', () => {
+  it('shows helper text alongside an error', () => {
     render(
       <FormField label="Email" htmlFor="email" error="Bad" helperText="Enter your email">
         <input id="email" />
       </FormField>,
     );
-    expect(screen.queryByText('Enter your email')).not.toBeInTheDocument();
+    // Helper text remains visible so users retain guidance while fixing the error.
+    expect(screen.getByText('Enter your email')).toBeInTheDocument();
     expect(screen.getByText('Bad')).toBeInTheDocument();
   });
 
-  it('provides context via useFormField', () => {
+  it('provides context via useFormField including hasHelper', () => {
     render(
-      <FormField label="Name" htmlFor="name" error="Required">
+      <FormField label="Name" htmlFor="name" error="Required" helperText="Hint">
         <ContextReader />
       </FormField>,
     );
@@ -66,6 +67,7 @@ describe('FormField', () => {
     expect(ctx.errorId).toBe('name-error');
     expect(ctx.helperId).toBe('name-helper');
     expect(ctx.hasError).toBe(true);
+    expect(ctx.hasHelper).toBe(true);
   });
 
   it('useFormField throws outside FormField', () => {

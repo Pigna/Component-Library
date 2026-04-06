@@ -1,4 +1,4 @@
-import { type InputHTMLAttributes, type Ref, useEffect, useRef, useCallback } from 'react';
+import { type InputHTMLAttributes, type MutableRefObject, type Ref, useEffect, useRef, useCallback } from 'react';
 import styles from './Checkbox.module.scss';
 
 export interface CheckboxProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> {
@@ -38,7 +38,7 @@ export function Checkbox({
       internalRef.current = node;
       if (typeof ref === 'function') ref(node);
       else if (ref && typeof ref === 'object') {
-        (ref as React.MutableRefObject<HTMLInputElement | null>).current = node;
+        (ref as MutableRefObject<HTMLInputElement | null>).current = node;
       }
     },
     [ref],

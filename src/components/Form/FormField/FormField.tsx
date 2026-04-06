@@ -8,6 +8,8 @@ interface FormFieldContextValue {
   errorId: string;
   helperId: string;
   hasError: boolean;
+  /** True when a non-empty helperText is provided — children include helperId in aria-describedby. */
+  hasHelper: boolean;
 }
 
 const FormFieldContext = createContext<FormFieldContextValue | null>(null);
@@ -70,6 +72,7 @@ export function FormField({
   const errorId = `${htmlFor}-error`;
   const helperId = `${htmlFor}-helper`;
   const hasError = !!error;
+  const hasHelper = !!helperText;
 
   const classNames = [styles.field, className].filter(Boolean).join(' ');
 
@@ -78,6 +81,7 @@ export function FormField({
     errorId,
     helperId,
     hasError,
+    hasHelper,
   };
 
   return (
@@ -95,7 +99,7 @@ export function FormField({
             {error}
           </span>
         )}
-        {helperText && !error && (
+        {helperText && (
           <span id={helperId} className={styles.helper}>
             {helperText}
           </span>

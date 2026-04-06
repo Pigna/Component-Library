@@ -44,9 +44,17 @@ describe('RadioGroup', () => {
     expect(screen.getByText('Required')).toBeInTheDocument();
   });
 
-  it('sets aria-invalid on fieldset when error is present', () => {
+  it('sets aria-invalid on the fieldset when error is present', () => {
     render(<RadioGroup legend="Pick" name="test" options={options} error="Required" />);
     expect(screen.getByRole('group')).toHaveAttribute('aria-invalid', 'true');
+  });
+
+  it('links each radio to the error message via aria-describedby', () => {
+    render(<RadioGroup legend="Pick" name="test" options={options} error="Required" />);
+    const radios = screen.getAllByRole('radio');
+    radios.forEach((radio) => {
+      expect(radio).toHaveAttribute('aria-describedby', 'test-error');
+    });
   });
 
   it('supports controlled value', () => {

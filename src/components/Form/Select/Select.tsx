@@ -1,4 +1,5 @@
 import type { SelectHTMLAttributes, Ref } from 'react';
+import { useId } from 'react';
 import { FormField, useFormField } from '../FormField';
 import styles from './Select.module.scss';
 
@@ -50,7 +51,8 @@ export function Select({
   ref,
   ...rest
 }: SelectProps) {
-  const inputId = id ?? `select-${label.toLowerCase().replace(/\s+/g, '-')}`;
+  const generatedId = useId();
+  const inputId = id ?? generatedId;
 
   return (
     <FormField
@@ -84,9 +86,10 @@ function SelectInner({
   options: SelectOption[];
   placeholder?: string;
 }) {
-  const { errorId, helperId, hasError } = useFormField();
+  const { errorId, helperId, hasError, hasHelper } = useFormField();
 
-  const describedBy = [hasError ? errorId : helperId].filter(Boolean).join(' ') || undefined;
+  const describedBy =
+    [hasError ? errorId : null, hasHelper ? helperId : null].filter(Boolean).join(' ') || undefined;
 
   const classNames = [styles.select, hasError ? styles.error : '', className]
     .filter(Boolean)

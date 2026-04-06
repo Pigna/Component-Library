@@ -13,7 +13,7 @@ const preview: Preview = {
       test: 'error',
     },
     backgrounds: {
-      disable: true,
+      disabled: true,
     },
   },
   globalTypes: {

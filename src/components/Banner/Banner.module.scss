@@ -9,12 +9,36 @@
   border-radius: var(--radius-md);
   font-family: var(--font-family);
   font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-normal);
   line-height: var(--line-height-normal);
 
   @include breakpoint-sm {
     align-items: center;
   }
 }
+
+/* --- Dismiss animation --- */
+
+.dismissing {
+  animation: bannerDismiss var(--transition-normal) ease forwards;
+  pointer-events: none;
+}
+
+@keyframes bannerDismiss {
+  to {
+    opacity: 0;
+    transform: translateY(-0.25rem);
+  }
+}
+
+@include reduced-motion {
+  .dismissing {
+    animation: none;
+    opacity: 0;
+  }
+}
+
+/* --- Icon --- */
 
 .icon {
   flex-shrink: 0;
@@ -23,8 +47,12 @@
   justify-content: center;
   width: 1.25rem;
   height: 1.25rem;
-  font-size: var(--font-size-md);
-  line-height: 1;
+
+  svg {
+    width: 1.25rem;
+    height: 1.25rem;
+    flex-shrink: 0;
+  }
 }
 
 .content {

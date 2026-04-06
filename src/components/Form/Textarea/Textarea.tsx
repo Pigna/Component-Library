@@ -1,4 +1,5 @@
 import type { TextareaHTMLAttributes, Ref } from 'react';
+import { useId, useState } from 'react';
 import { FormField, useFormField } from '../FormField';
 import styles from './Textarea.module.scss';
 
@@ -36,7 +37,8 @@ export function Textarea({
   ref,
   ...rest
 }: TextareaProps) {
-  const inputId = id ?? `textarea-${label.toLowerCase().replace(/\s+/g, '-')}`;
+  const generatedId = useId();
+  const inputId = id ?? generatedId;
 
   return (
     <FormField
@@ -58,6 +60,13 @@ export function Textarea({
   );
 }
 
+/** Returns the character length of a textarea value regardless of its type. */
+function getLength(v: string | ReadonlyArray<string> | number | undefined): number {
+  if (typeof v === 'string') return v.length;
+  if (typeof v === 'number') return String(v).length;
+  return 0;
+}
+
 function TextareaInner({
   ref,
   resize = 'vertical',
@@ -65,25 +74,34 @@ function TextareaInner({
   maxLength,
   value,
   defaultValue,
+  onChange,
   ...props
 }: TextareaHTMLAttributes<HTMLTextAreaElement> & {
   ref?: Ref<HTMLTextAreaElement>;
   resize?: TextareaResize;
 }) {
-  const { errorId, helperId, hasError } = useFormField();
+  const { errorId, helperId, hasError, hasHelper } = useFormField();
 
-  const describedBy = [hasError ? errorId : helperId].filter(Boolean).join(' ') || undefined;
+  const describedBy =
+    [hasError ? errorId : null, hasHelper ? helperId : null].filter(Boolean).join(' ') || undefined;
 
   const classNames = [styles.textarea, hasError ? styles.error : '', className]
     .filter(Boolean)
     .join(' ');
 
-  const currentLength =
-    typeof value === 'string'
-      ? value.length
-      : typeof defaultValue === 'string'
-        ? defaultValue.length
-        : undefined;
+  // For uncontrolled usage, track length in local state via onChange.
+  // For controlled usage, derive length directly from the value prop — no effect needed.
+  const [uncontrolledLength, setUncontrolledLength] = useState<number>(() =>
+    getLength(defaultValue),
+  );
+  const displayLength = value !== undefined ? getLength(value) : uncontrolledLength;
+
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    if (value === undefined) {
+      setUncontrolledLength(e.target.value.length);
+    }
+    onChange?.(e);
+  };
 
   return (
     <div className={styles.wrapper}>
@@ -96,14 +114,14 @@ function TextareaInner({
         maxLength={maxLength}
         value={value}
         defaultValue={defaultValue}
+        onChange={handleChange}
         {...props}
       />
-      {maxLength != null && currentLength != null && (
+      {maxLength != null && (
         <span className={styles.charCount} aria-live="polite">
-          {currentLength}/{maxLength}
+          {displayLength} of {maxLength}
         </span>
       )}
     </div>
   );
 }
-

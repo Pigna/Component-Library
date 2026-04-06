@@ -144,6 +144,9 @@ export type { ButtonProps } from './components/Button';
 | `npm run format` | Format code with Prettier |
 | `npm run format:check` | Check formatting without writing |
 
+## Other tools
+- ```npx skills add pbakaus/impeccable``` - Styling tool by **pbakaus/impeccable** https://impeccable.style/
+
 ## License
 
 MIT

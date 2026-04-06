@@ -1,6 +1,5 @@
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { describe, it, expect, vi } from 'vitest';
+import { render, screen, act, fireEvent } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { Banner } from './Banner';
 
 describe('Banner', () => {
@@ -29,6 +28,11 @@ describe('Banner', () => {
     expect(screen.getByRole('status')).toBeInTheDocument();
   });
 
+  it('has aria-atomic="true" for complete announcements', () => {
+    render(<Banner variant="info">Info message</Banner>);
+    expect(screen.getByRole('status')).toHaveAttribute('aria-atomic', 'true');
+  });
+
   it('shows close button when dismissible', () => {
     render(
       <Banner variant="info" dismissible>
@@ -43,22 +47,61 @@ describe('Banner', () => {
     expect(screen.queryByRole('button')).not.toBeInTheDocument();
   });
 
-  it('calls onDismiss when close button is clicked', async () => {
-    const handleDismiss = vi.fn();
-    render(
-      <Banner variant="info" dismissible onDismiss={handleDismiss}>
-        Dismissible
-      </Banner>,
-    );
-
-    await userEvent.click(screen.getByRole('button', { name: 'Dismiss banner' }));
-    expect(handleDismiss).toHaveBeenCalledTimes(1);
+  it('renders SVG icon with aria-hidden="true"', () => {
+    const { container } = render(<Banner variant="info">Test</Banner>);
+    expect(container.querySelector('[aria-hidden="true"]')).toBeInTheDocument();
   });
 
-  it('renders icon with aria-hidden="true"', () => {
-    const { container } = render(<Banner variant="info">Test</Banner>);
-    const icon = container.querySelector('[aria-hidden="true"]');
-    expect(icon).toBeInTheDocument();
+  describe('dismiss behaviour', () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it('applies dismissing class immediately on click', () => {
+      const { container } = render(
+        <Banner variant="info" dismissible>
+          Dismissible
+        </Banner>,
+      );
+      fireEvent.click(screen.getByRole('button', { name: 'Dismiss banner' }));
+      expect(container.querySelector('[class*="dismissing"]')).toBeInTheDocument();
+    });
+
+    it('calls onDismiss after the animation duration (250 ms)', () => {
+      const handleDismiss = vi.fn();
+      render(
+        <Banner variant="info" dismissible onDismiss={handleDismiss}>
+          Dismissible
+        </Banner>,
+      );
+      fireEvent.click(screen.getByRole('button', { name: 'Dismiss banner' }));
+      act(() => { vi.runAllTimers(); });
+      expect(handleDismiss).toHaveBeenCalledTimes(1);
+    });
+
+    it('hides banner after animation even without onDismiss', () => {
+      render(
+        <Banner variant="info" dismissible>
+          Dismissible
+        </Banner>,
+      );
+      fireEvent.click(screen.getByRole('button', { name: 'Dismiss banner' }));
+      act(() => { vi.runAllTimers(); });
+      expect(screen.queryByRole('status')).not.toBeInTheDocument();
+    });
+
+    it('does not call onDismiss before animation ends', () => {
+      const handleDismiss = vi.fn();
+      render(
+        <Banner variant="info" dismissible onDismiss={handleDismiss}>
+          Dismissible
+        </Banner>,
+      );
+      fireEvent.click(screen.getByRole('button', { name: 'Dismiss banner' }));
+      expect(handleDismiss).not.toHaveBeenCalled();
+    });
   });
 });
-

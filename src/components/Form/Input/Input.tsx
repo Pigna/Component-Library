@@ -1,4 +1,5 @@
 import type { InputHTMLAttributes, Ref } from 'react';
+import { useId } from 'react';
 import { FormField, useFormField } from '../FormField';
 import styles from './Input.module.scss';
 
@@ -8,6 +9,13 @@ const builtInPatterns: Partial<Record<InputType, string>> = {
   email: "[a-zA-Z0-9._%+\\-]+@[a-zA-Z0-9.\\-]+\\.[a-zA-Z]{2,}",
   url: "https?://.+",
   tel: "[+]?[\\d\\s\\-().]+",
+};
+
+/** Shown as the browser tooltip / validation message when a built-in pattern is used. */
+const builtInTitles: Partial<Record<InputType, string>> = {
+  email: 'Enter a valid email address (e.g. name@example.com)',
+  url: 'Enter a full URL starting with http:// or https://',
+  tel: 'Enter a phone number (e.g. +1 555 123 4567)',
 };
 
 export interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> {
@@ -44,8 +52,11 @@ export function Input({
   ref,
   ...rest
 }: InputProps) {
-  const inputId = id ?? `input-${label.toLowerCase().replace(/\s+/g, '-')}`;
+  const generatedId = useId();
+  const inputId = id ?? generatedId;
   const resolvedPattern = pattern ?? builtInPatterns[inputType];
+  // Only attach a title for built-in patterns — consumer-provided patterns should supply their own title.
+  const resolvedTitle = !pattern ? builtInTitles[inputType] : undefined;
 
   return (
     <FormField
@@ -60,6 +71,7 @@ export function Input({
         id={inputId}
         type={inputType}
         pattern={resolvedPattern}
+        title={resolvedTitle}
         required={required}
         className={className}
         {...rest}
@@ -74,9 +86,10 @@ function InputInner({
   className,
   ...props
 }: InputHTMLAttributes<HTMLInputElement> & { ref?: Ref<HTMLInputElement> }) {
-  const { errorId, helperId, hasError } = useFormField();
+  const { errorId, helperId, hasError, hasHelper } = useFormField();
 
-  const describedBy = [hasError ? errorId : helperId].filter(Boolean).join(' ') || undefined;
+  const describedBy =
+    [hasError ? errorId : null, hasHelper ? helperId : null].filter(Boolean).join(' ') || undefined;
 
   const classNames = [styles.input, hasError ? styles.error : '', className]
     .filter(Boolean)
