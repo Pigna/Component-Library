@@ -3,7 +3,7 @@
 .wrapper {
   display: block;
 
-  @include breakpoint-lg {
+  @include breakpoint-md {
     display: none;
   }
 }
@@ -39,6 +39,11 @@
   inset: 0;
   background: var(--color-overlay);
   z-index: var(--z-index-dialog);
+  animation: fadeIn var(--transition-fast) ease forwards;
+
+  @include reduced-motion {
+    animation: none;
+  }
 }
 
 .panel {
@@ -53,10 +58,30 @@
   display: flex;
   flex-direction: column;
   overflow-y: auto;
-  transform: translateX(0);
+  animation: slideIn var(--transition-normal) ease forwards;
 
   @include reduced-motion {
     animation: none;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
   }
 }
 
@@ -71,10 +96,11 @@
   flex: 1;
   overflow-y: auto;
 
-  /* Override SideMenu display:none so it shows inside hamburger panel */
+  /* Override SideMenu breakpoint styles inside the hamburger slide-in panel */
   :global {
     nav {
-      display: block !important;
+      display: flex !important;
+      flex-direction: column !important;
       width: 100% !important;
       border-right: none !important;
     }

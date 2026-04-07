@@ -27,11 +27,11 @@
   @include focus-ring;
 
   &:hover {
-    background-color: var(--color-surface);
+    background-color: var(--color-surface-raised);
   }
 
   &:active {
-    background-color: var(--color-surface-raised);
+    background-color: var(--color-surface-sunken, var(--color-surface-raised));
   }
 }
 
@@ -39,11 +39,13 @@
   color: var(--color-primary);
   background-color: var(--color-surface);
   font-weight: var(--font-weight-medium);
+  box-shadow: inset 3px 0 0 var(--color-primary);
 }
 
 .disabled .link {
   color: var(--color-text-disabled);
   cursor: not-allowed;
+  pointer-events: none;
 
   &:hover {
     background-color: transparent;
@@ -61,5 +63,15 @@
 
 .label {
   @include truncate;
+}
+
+.collapsed .link {
+  justify-content: center;
+  padding-left: var(--space-2);
+  padding-right: var(--space-2);
+}
+
+.collapsed .label {
+  display: none;
 }
 

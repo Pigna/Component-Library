@@ -9,6 +9,7 @@ import {
 } from 'react';
 import { CloseButton } from '../CloseButton';
 import styles from './HamburgerMenu.module.scss';
+import { HamburgerMenuContext } from './HamburgerMenuContext';
 
 export interface HamburgerMenuProps extends HTMLAttributes<HTMLDivElement> {
   /** Ref forwarded to the container. */
@@ -46,6 +47,7 @@ export function HamburgerMenu({
   const isControlled = controlledOpen !== undefined;
   const isOpen = isControlled ? controlledOpen : uncontrolledOpen;
   const panelRef = useRef<HTMLDivElement | null>(null);
+  const toggleRef = useRef<HTMLButtonElement | null>(null);
 
   const setOpen = useCallback(
     (next: boolean) => {
@@ -55,7 +57,10 @@ export function HamburgerMenu({
     [isControlled, onOpenChange],
   );
 
-  const close = useCallback(() => setOpen(false), [setOpen]);
+  const close = useCallback(() => {
+    setOpen(false);
+    toggleRef.current?.focus();
+  }, [setOpen]);
   const toggle = useCallback(() => setOpen(!isOpen), [isOpen, setOpen]);
 
   /* Escape key */
@@ -100,6 +105,7 @@ export function HamburgerMenu({
   return (
     <div ref={ref} className={wrapperClasses} {...rest}>
       <button
+        ref={toggleRef}
         type="button"
         className={styles.toggle}
         aria-expanded={isOpen}
@@ -135,7 +141,9 @@ export function HamburgerMenu({
               <CloseButton aria-label="Close menu" onClick={close} />
             </div>
             <div className={styles.panelContent}>
-              {children}
+              <HamburgerMenuContext.Provider value={true}>
+                {children}
+              </HamburgerMenuContext.Provider>
             </div>
           </div>
         </>

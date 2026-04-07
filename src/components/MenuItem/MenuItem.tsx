@@ -1,5 +1,6 @@
 import type { HTMLAttributes, ReactNode, Ref } from 'react';
 import styles from './MenuItem.module.scss';
+import { useSideMenu } from '../SideMenu/SideMenuContext';
 
 export interface MenuItemProps extends HTMLAttributes<HTMLLIElement> {
   /** Ref forwarded to the `<li>`. */
@@ -36,14 +37,19 @@ export function MenuItem({
   ref,
   ...rest
 }: MenuItemProps) {
+  const { isCollapsed } = useSideMenu();
+
   const classNames = [
     styles.item,
     active ? styles.active : '',
     disabled ? styles.disabled : '',
+    isCollapsed ? styles.collapsed : '',
     className,
   ]
     .filter(Boolean)
     .join(' ');
+
+  const labelText = typeof children === 'string' ? children : undefined;
 
   const content = (
     <>
@@ -53,15 +59,15 @@ export function MenuItem({
   );
 
   return (
-    <li ref={ref} className={classNames} role="none" {...rest}>
+    <li ref={ref} className={classNames} {...rest}>
       {href ? (
         <a
           href={href}
           className={styles.link}
-          role="menuitem"
           aria-current={active ? 'page' : undefined}
           aria-disabled={disabled || undefined}
           tabIndex={disabled ? -1 : 0}
+          title={isCollapsed ? labelText : undefined}
           onClick={disabled ? (e) => e.preventDefault() : undefined}
         >
           {content}
@@ -70,11 +76,9 @@ export function MenuItem({
         <button
           type="button"
           className={styles.link}
-          role="menuitem"
           aria-current={active ? 'page' : undefined}
-          aria-disabled={disabled || undefined}
           disabled={disabled}
-          tabIndex={disabled ? -1 : 0}
+          title={isCollapsed ? labelText : undefined}
         >
           {content}
         </button>

@@ -3,47 +3,51 @@ import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi } from 'vitest';
 import { SideMenu } from './SideMenu';
 
-/* SideMenu is display:none below lg breakpoint in CSS */
+/* SideMenu is display:none below lg breakpoint in CSS.
+   Tests force display:flex via inline style to make the nav accessible in jsdom. */
+const visible = { style: { display: 'flex' } } as const;
+
 describe('SideMenu', () => {
   it('renders as a nav with default aria-label', () => {
-    const { container } = render(<SideMenu><li>Item</li></SideMenu>);
+    const { container } = render(<SideMenu {...visible}><li>Item</li></SideMenu>);
     const nav = container.querySelector('nav');
     expect(nav).toBeInTheDocument();
     expect(nav).toHaveAttribute('aria-label', 'Side navigation');
   });
 
   it('supports custom aria-label', () => {
-    const { container } = render(<SideMenu ariaLabel="Main navigation"><li>Item</li></SideMenu>);
+    const { container } = render(<SideMenu {...visible} ariaLabel="Main navigation"><li>Item</li></SideMenu>);
     const nav = container.querySelector('nav');
     expect(nav).toHaveAttribute('aria-label', 'Main navigation');
   });
 
-  it('renders an inner list with role="menu"', () => {
-    const { container } = render(<SideMenu><li>Item</li></SideMenu>);
-    const list = container.querySelector('[role="menu"]');
+  it('renders an inner list without ARIA role (plain list inside nav landmark)', () => {
+    const { container } = render(<SideMenu {...visible}><li>Item</li></SideMenu>);
+    const list = container.querySelector('ul');
     expect(list).toBeInTheDocument();
     expect(list!.tagName).toBe('UL');
+    expect(list).not.toHaveAttribute('role');
   });
 
   it('renders children', () => {
-    render(<SideMenu><li>Dashboard</li></SideMenu>);
+    render(<SideMenu {...visible}><li>Dashboard</li></SideMenu>);
     expect(screen.getByText('Dashboard')).toBeInTheDocument();
   });
 
   /* ---------- collapsible (uncontrolled) ---------- */
 
   it('does not render collapse toggle when collapsible is false', () => {
-    render(<SideMenu><li>Item</li></SideMenu>);
+    render(<SideMenu {...visible}><li>Item</li></SideMenu>);
     expect(screen.queryByRole('button', { name: /collapse/i })).not.toBeInTheDocument();
   });
 
   it('renders collapse toggle when collapsible is true', () => {
-    render(<SideMenu collapsible><li>Item</li></SideMenu>);
+    render(<SideMenu {...visible} collapsible><li>Item</li></SideMenu>);
     expect(screen.getByRole('button', { name: 'Collapse sidebar' })).toBeInTheDocument();
   });
 
   it('toggles collapsed state on button click', async () => {
-    render(<SideMenu collapsible><li>Item</li></SideMenu>);
+    render(<SideMenu {...visible} collapsible><li>Item</li></SideMenu>);
     const btn = screen.getByRole('button', { name: 'Collapse sidebar' });
 
     await userEvent.click(btn);
@@ -56,7 +60,7 @@ describe('SideMenu', () => {
   it('calls onCollapsedChange with the new state', async () => {
     const handleChange = vi.fn();
     render(
-      <SideMenu collapsible onCollapsedChange={handleChange}>
+      <SideMenu {...visible} collapsible onCollapsedChange={handleChange}>
         <li>Item</li>
       </SideMenu>,
     );
@@ -71,7 +75,7 @@ describe('SideMenu', () => {
 
   it('respects controlled collapsed=true', () => {
     render(
-      <SideMenu collapsible collapsed>
+      <SideMenu {...visible} collapsible collapsed>
         <li>Item</li>
       </SideMenu>,
     );
@@ -80,7 +84,7 @@ describe('SideMenu', () => {
 
   it('respects controlled collapsed=false', () => {
     render(
-      <SideMenu collapsible collapsed={false}>
+      <SideMenu {...visible} collapsible collapsed={false}>
         <li>Item</li>
       </SideMenu>,
     );
@@ -90,7 +94,7 @@ describe('SideMenu', () => {
   it('does not change internal state when controlled', async () => {
     const handleChange = vi.fn();
     render(
-      <SideMenu collapsible collapsed={false} onCollapsedChange={handleChange}>
+      <SideMenu {...visible} collapsible collapsed={false} onCollapsedChange={handleChange}>
         <li>Item</li>
       </SideMenu>,
     );

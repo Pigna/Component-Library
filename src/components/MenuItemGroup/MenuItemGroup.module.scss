@@ -5,17 +5,22 @@
   flex-direction: column;
 }
 
+/* Trigger with optional icon */
 .trigger {
   display: flex;
   align-items: center;
+  gap: var(--space-2);
   justify-content: space-between;
   width: 100%;
   padding: var(--space-2) var(--space-4);
   border: none;
   background: transparent;
   font-family: var(--font-family);
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-xs);
   font-weight: var(--font-weight-semibold);
+  text-align: left;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
   color: var(--color-text-secondary);
   cursor: pointer;
   border-radius: var(--radius-md);
@@ -25,23 +30,108 @@
 
   &:hover {
     color: var(--color-text-primary);
-    background-color: var(--color-surface);
+    background-color: var(--color-surface-raised);
   }
 }
 
 .triggerLabel {
+  flex: 1;
   @include truncate;
+}
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
 }
 
 .chevron {
   flex-shrink: 0;
-  font-size: var(--font-size-xs);
-  line-height: 1;
-  display: inline-block;
-  font-family: var(--font-family);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
   color: var(--color-text-secondary);
+  transition: transform var(--transition-fast);
+
+  @include reduced-motion {
+    transition: none;
+  }
+}
+
+.chevronOpen {
+  transform: rotate(90deg);
+}
+
+.staticLabel {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  font-family: var(--font-family);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  text-align: left;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  @include truncate;
+}
+
+/* ── Collapsed (icon-only) mode ── */
+.collapsedTrigger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: var(--space-2);
+  border: none;
+  background: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast);
+
+  @include focus-ring;
+
+  &:hover,
+  &:focus-visible {
+    background-color: var(--color-surface-raised);
+    color: var(--color-text-primary);
+  }
+}
+
+/* ── Flyout panel (rendered via portal, position:fixed) ── */
+.flyout {
+  position: fixed;
+  z-index: var(--z-index-popover);
+  min-width: 11rem;
+  padding: var(--space-2) var(--space-2);
+  background-color: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+}
+
+.flyoutLabel {
+  margin: 0 0 var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  font-family: var(--font-family);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-secondary);
+}
+
+.flyoutList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
 }
 
 /* Animated content wrapper using CSS grid trick for smooth height */

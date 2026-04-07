@@ -2,18 +2,24 @@
 
 .sideMenu {
   display: none;
-  width: 260px;
   min-height: 100%;
   padding: var(--space-4) 0;
   background-color: var(--color-surface);
   border-right: 1px solid var(--color-border);
   overflow-y: auto;
   overflow-x: hidden;
-  transition: width var(--transition-normal);
 
-  @include breakpoint-lg {
+  /* Auto-collapsed (icon-only) at md–lg: show narrow sidebar */
+  @include breakpoint-md {
     display: flex;
     flex-direction: column;
+    width: 60px;
+  }
+
+  /* Full-width at lg+: expand to 260px, animate */
+  @include breakpoint-lg {
+    width: 260px;
+    transition: width var(--transition-normal);
   }
 
   @include reduced-motion {
@@ -21,14 +27,9 @@
   }
 }
 
+/* Manually collapsed at lg+ — stays icon-only */
 .collapsed {
   width: 60px;
-
-  /* Hide labels, show only icons */
-  .list :global(.menuLabel),
-  .list span:not([aria-hidden]) {
-    /* Icons use aria-hidden, labels don't — but we use a dedicated class approach */
-  }
 }
 
 .collapseToggle {
@@ -44,6 +45,7 @@
   background: transparent;
   color: var(--color-text-secondary);
   cursor: pointer;
+  flex-shrink: 0;
   transition:
     background-color var(--transition-fast),
     color var(--transition-fast);
