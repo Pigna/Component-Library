@@ -1,5 +1,13 @@
 @use '../../styles/mixins' as *;
 
+/* --- Screen reader only --- */
+
+.srOnly {
+  @include sr-only;
+}
+
+/* --- Wrapper --- */
+
 .wrapper {
   display: flex;
   flex-direction: column;
@@ -50,7 +58,7 @@
 
 .thead {
   border-bottom: 2px solid var(--table-accent, var(--color-border));
-  background-color: var(--table-header-bg, transparent);
+  background-color: var(--table-header-bg, var(--color-surface));
   color: var(--table-header-color, inherit);
 }
 
@@ -89,24 +97,40 @@
 }
 
 .sortIcon {
-  font-size: var(--font-size-xs);
-  line-height: 1;
-  opacity: 0.6;
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
 }
+
+/* Resize handle — 8px hit target centered on the column boundary */
 
 .resizeHandle {
   position: absolute;
   right: 0;
   top: 0;
   bottom: 0;
-  width: 4px;
+  width: 8px;
   cursor: col-resize;
   background: transparent;
+  border: none;
+  padding: 0;
 
-  &:hover,
-  &:active {
+  /* Visible indicator line */
+  &::after {
+    content: '';
+    position: absolute;
+    right: 3px;
+    top: 20%;
+    bottom: 20%;
+    width: 2px;
+    border-radius: 1px;
+    background: var(--color-border);
+    transition: background-color var(--transition-fast);
+  }
+
+  &:hover::after,
+  &:active::after {
     background: var(--color-primary);
-    opacity: 0.3;
   }
 }
 
@@ -133,12 +157,73 @@
   color: var(--color-text-secondary);
 }
 
+/* Inline "Clear search" link inside the empty state */
+
+.clearSearchButton {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--color-primary);
+  cursor: pointer;
+  font: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+
+  @include focus-ring;
+
+  &:hover {
+    color: var(--color-primary-hover);
+  }
+}
+
 .selectable {
   cursor: pointer;
 }
 
 .selected {
   background-color: color-mix(in srgb, var(--table-accent, var(--color-primary)) 12%, transparent) !important;
+}
+
+/* Focus ring on selectable rows */
+
+.selectable:focus-visible {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: -2px;
+}
+
+/* --- Skeleton loading --- */
+
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeletonRow {
+  pointer-events: none;
+}
+
+.skeletonCell {
+  display: block;
+  height: 1rem;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(
+    90deg,
+    var(--color-surface) 25%,
+    var(--color-border) 50%,
+    var(--color-surface) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s ease-in-out infinite;
+
+  @include reduced-motion {
+    animation: none;
+    background: var(--color-surface);
+  }
 }
 
 /* --- Striping --- */
@@ -170,7 +255,7 @@
 .pagination {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   gap: var(--space-4);
   padding: var(--space-2) 0;
 }
@@ -178,6 +263,7 @@
 .pageButton {
   display: inline-flex;
   align-items: center;
+  gap: var(--space-1);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   background: transparent;
@@ -204,7 +290,14 @@
 }
 
 .pageInfo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
   font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.showingInfo {
   color: var(--color-text-secondary);
 }
 

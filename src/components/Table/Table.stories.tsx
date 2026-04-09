@@ -34,6 +34,7 @@ const meta: Meta<typeof Table> = {
     headerColor: { control: 'color' },
     headerTextColor: { control: 'color' },
     selectable: { control: 'boolean' },
+    loading: { control: 'boolean' },
   },
 };
 
@@ -98,13 +99,32 @@ export const ColoredHeader: Story = {
   },
 };
 
-/** Selectable rows — click a row to highlight it. */
+/** Selectable rows — click or press Enter/Space to select; click again or press Escape to deselect. */
 export const SelectableRows: Story = {
   args: {
     columns,
     data: sampleData,
     selectable: true,
     accentColor: '#0055cc',
+  },
+};
+
+/** Loading skeleton — shown while data is being fetched. */
+export const Loading: Story = {
+  args: {
+    columns,
+    data: [],
+    loading: true,
+    pageSize: 5,
+  },
+};
+
+/** Error state — displayed when data could not be loaded. */
+export const ErrorState: Story = {
+  args: {
+    columns,
+    data: [],
+    error: 'Failed to load users. Please try again.',
   },
 };
 
@@ -124,4 +144,5 @@ export const KitchenSink: Story = {
     caption: 'Full-featured user list',
   },
 };
+
 
