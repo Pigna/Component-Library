@@ -60,6 +60,9 @@ export {
   Checkbox,
   RadioGroup,
   Toggle,
+  FormGroup,
+  FormSection,
+  ConditionalField,
 } from './components/Form';
 export type { FormFieldProps } from './components/Form';
 export type { InputProps, InputType } from './components/Form';
@@ -68,6 +71,13 @@ export type { SelectProps, SelectOption } from './components/Form';
 export type { CheckboxProps } from './components/Form';
 export type { RadioGroupProps, RadioOption } from './components/Form';
 export type { ToggleProps } from './components/Form';
+export type { FormGroupProps } from './components/Form';
+export type { FormSectionProps } from './components/Form';
+export type { ConditionalFieldProps } from './components/Form';
+
+/* --- Tabs --- */
+export { Tabs, TabList, Tab, TabPanel } from './components/Tabs';
+export type { TabsProps, TabListProps, TabProps, TabPanelProps } from './components/Tabs';
 
 /* --- Navigation & Notifications --- */
 export { MenuItem } from './components/MenuItem';
