@@ -128,6 +128,16 @@ export const ErrorState: Story = {
   },
 };
 
+/** Error state with selectable rows disabled, loading finished. */
+export const ErrorStateWithContext: Story = {
+  args: {
+    columns,
+    data: [],
+    searchable: true,
+    error: 'Could not connect to the server. Check your network and retry.',
+  },
+};
+
 /** Full-featured table with header color, selectable rows, search, pagination. */
 export const KitchenSink: Story = {
   args: {

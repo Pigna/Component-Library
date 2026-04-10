@@ -17,7 +17,15 @@
 
 .toolbar {
   display: flex;
+  align-items: center;
   justify-content: flex-end;
+  gap: var(--space-3);
+}
+
+.resultCount {
+  margin-right: auto;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
 }
 
 .search {
@@ -69,6 +77,16 @@
   font-weight: var(--font-weight-semibold);
   white-space: nowrap;
   user-select: none;
+
+  /* Subtle tint on the active sort column */
+  &[aria-sort='ascending'],
+  &[aria-sort='descending'] {
+    background-color: color-mix(
+      in srgb,
+      var(--table-accent, var(--color-primary)) 8%,
+      var(--table-header-bg, var(--color-surface))
+    );
+  }
 }
 
 .thContent {
@@ -157,6 +175,15 @@
   color: var(--color-text-secondary);
 }
 
+/* Error content shown inside the empty-state cell */
+
+.errorContent {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-error);
+}
+
 /* Inline "Clear search" link inside the empty state */
 
 .clearSearchButton {
@@ -181,7 +208,12 @@
 }
 
 .selected {
+  /* !important needed to override striped-row specificity */
   background-color: color-mix(in srgb, var(--table-accent, var(--color-primary)) 12%, transparent) !important;
+
+  &:hover {
+    background-color: color-mix(in srgb, var(--table-accent, var(--color-primary)) 18%, transparent) !important;
+  }
 }
 
 /* Focus ring on selectable rows */
@@ -204,7 +236,16 @@
 }
 
 .skeletonRow {
+  border-bottom: 1px solid var(--color-border);
   pointer-events: none;
+
+  /* Vary cell widths to mimic realistic data distribution */
+  td:nth-child(1) .skeletonCell { width: 40%; }
+  td:nth-child(2) .skeletonCell { width: 78%; }
+  td:nth-child(3) .skeletonCell { width: 55%; }
+  td:nth-child(4) .skeletonCell { width: 85%; }
+  td:nth-child(5) .skeletonCell { width: 45%; }
+  td:nth-child(n+6) .skeletonCell { width: 65%; }
 }
 
 .skeletonCell {
@@ -297,7 +338,6 @@
   color: var(--color-text-secondary);
 }
 
-.showingInfo {
-  color: var(--color-text-secondary);
-}
+/* Styling hook for the "Showing X–Y of Z" span; inherits color from .pageInfo */
+.showingInfo {}
 

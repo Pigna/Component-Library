@@ -141,7 +141,42 @@ describe('Table', () => {
     expect(screen.getByText('Failed to load')).toBeInTheDocument();
   });
 
-  /* --- Row selection (keyboard + mouse) --- */
+  it('wraps error content in an error-styled container', () => {
+    render(<Table columns={columns} data={[]} error="Something went wrong" />);
+    const errorText = screen.getByText('Something went wrong');
+    expect(errorText.closest('[class*="errorContent"]')).toBeInTheDocument();
+  });
+
+  it('sets role="grid" on the table when selectable', () => {
+    render(<Table columns={columns} data={data} selectable />);
+    expect(screen.getByRole('grid')).toBeInTheDocument();
+  });
+
+  it('does not set role="grid" when not selectable', () => {
+    render(<Table columns={columns} data={data} />);
+    expect(screen.queryByRole('grid')).not.toBeInTheDocument();
+    expect(screen.getByRole('table')).toBeInTheDocument();
+  });
+
+  /* --- Visible result count in toolbar --- */
+
+  it('shows result count in toolbar when search is active', async () => {
+    render(<Table columns={columns} data={data} searchable />);
+    await userEvent.type(screen.getByRole('searchbox'), 'Alice');
+    expect(screen.getByText('1 result')).toBeInTheDocument();
+  });
+
+  it('shows plural result count for multiple matches', async () => {
+    render(<Table columns={columns} data={data} searchable />);
+    await userEvent.type(screen.getByRole('searchbox'), 'a');
+    // The visible toolbar span shows e.g. "2 results" (live region shows "2 results found")
+    expect(screen.getByText(/^\d+ results$/)).toBeInTheDocument();
+  });
+
+  it('hides result count when search is empty', () => {
+    render(<Table columns={columns} data={data} searchable />);
+    expect(screen.queryByText(/result/)).not.toBeInTheDocument();
+  });
 
   it('selects a row on click when selectable', async () => {
     render(<Table columns={columns} data={data} selectable />);

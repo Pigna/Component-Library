@@ -56,6 +56,16 @@ function ChevronRightIcon() {
   );
 }
 
+function WarningIcon() {
+  return (
+    <svg aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 16 16" fill="none">
+      <path d="M8 2L14.5 13H1.5L8 2Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+      <path d="M8 6.5V9.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      <circle cx="8" cy="11.5" r="0.75" fill="currentColor" />
+    </svg>
+  );
+}
+
 /* ---- Types ---- */
 
 export type SortDirection = 'asc' | 'desc' | 'none';
@@ -317,6 +327,11 @@ export function Table<T extends Record<string, unknown> = Record<string, unknown
 
       {searchable && (
         <div className={styles.toolbar}>
+          {search.trim() && (
+            <span className={styles.resultCount}>
+              {sorted.length} {sorted.length === 1 ? 'result' : 'results'}
+            </span>
+          )}
           <input
             type="search"
             className={styles.search}
@@ -339,6 +354,7 @@ export function Table<T extends Record<string, unknown> = Record<string, unknown
             .join(' ')}
           style={tableStyle}
           aria-busy={loading || undefined}
+          role={selectable ? 'grid' : undefined}
         >
           {caption && <caption className={styles.caption}>{caption}</caption>}
           <thead className={styles.thead}>
@@ -410,7 +426,10 @@ export function Table<T extends Record<string, unknown> = Record<string, unknown
               <tr>
                 <td className={styles.empty} colSpan={columns.length}>
                   {error ? (
-                    error
+                    <span className={styles.errorContent}>
+                      <WarningIcon />
+                      {error}
+                    </span>
                   ) : search.trim() ? (
                     <>
                       No results for &ldquo;{search}&rdquo;.{' '}
