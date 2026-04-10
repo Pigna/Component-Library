@@ -5,6 +5,8 @@
   border-radius: var(--radius-lg);
   padding: var(--space-5) var(--space-6);
   margin: 0;
+  /* Prevent fieldset from overflowing flex/grid containers */
+  min-width: 0;
   font-family: var(--font-family);
 }
 
@@ -27,4 +29,6 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
+  /* Consistent gap between legend and first field regardless of description */
+  padding-top: var(--space-3);
 }

@@ -1,7 +1,51 @@
+@use '../../../styles/mixins' as *;
+
+/* ---- keepMounted path: grid-template-rows collapse + opacity fade ---- */
+
 .keepMounted {
-  /* Wrapper used only when keepMounted=true */
+  display: grid;
+  grid-template-rows: 1fr;
+  opacity: 1;
+  transition:
+    grid-template-rows var(--transition-normal),
+    opacity var(--transition-fast);
+
+  @include reduced-motion {
+    transition: none;
+  }
 }
 
 .hidden {
-  display: none;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  pointer-events: none;
 }
+
+/* Inner wrapper required for the grid collapse technique */
+.inner {
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* ---- Default animated path: fade-in entrance on mount ---- */
+
+.enter {
+  animation: cfFadeIn var(--transition-normal) ease-out both;
+
+  @include reduced-motion {
+    animation: none;
+  }
+}
+
+@keyframes cfFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-0.25rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+

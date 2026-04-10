@@ -30,22 +30,23 @@ describe('ConditionalField', () => {
     expect(screen.getByTestId('content')).toBeInTheDocument();
   });
 
-  it('sets aria-hidden on wrapper when keepMounted and hidden', () => {
+  it('sets inert on wrapper when keepMounted and hidden', () => {
     const { container } = render(
       <ConditionalField show={false} keepMounted>
         <span>inner</span>
       </ConditionalField>,
     );
-    expect(container.firstChild).toHaveAttribute('aria-hidden', 'true');
+    // inert attribute is present (implicitly sets aria-hidden per HTML spec)
+    expect(container.firstChild).toHaveAttribute('inert');
   });
 
-  it('does not set aria-hidden when keepMounted and visible', () => {
+  it('does not set inert when keepMounted and visible', () => {
     const { container } = render(
       <ConditionalField show keepMounted>
         <span>inner</span>
       </ConditionalField>,
     );
-    expect(container.firstChild).not.toHaveAttribute('aria-hidden');
+    expect(container.firstChild).not.toHaveAttribute('inert');
   });
 
   it('renders nothing (null) when show is false without keepMounted', () => {
@@ -55,5 +56,25 @@ describe('ConditionalField', () => {
       </ConditionalField>,
     );
     expect(container.firstChild).toBeNull();
+  });
+
+  it('wraps children in a div when animated is true', () => {
+    const { container } = render(
+      <ConditionalField show animated>
+        <span data-testid="content">hello</span>
+      </ConditionalField>,
+    );
+    expect(container.firstChild?.nodeName).toBe('DIV');
+    expect(screen.getByTestId('content')).toBeInTheDocument();
+  });
+
+  it('does not render wrapper div when not animated (default)', () => {
+    const { container } = render(
+      <ConditionalField show>
+        <span data-testid="content">hello</span>
+      </ConditionalField>,
+    );
+    // Fragment renders — firstChild is the span itself
+    expect(container.firstChild?.nodeName).toBe('SPAN');
   });
 });

@@ -6,6 +6,7 @@ import {
   useState,
   type HTMLAttributes,
   type KeyboardEvent,
+  type RefObject,
   type ReactNode,
   type Ref,
 } from 'react';
@@ -17,7 +18,10 @@ interface TabsContextValue {
   activeTab: string;
   setActiveTab: (id: string) => void;
   registerTab: (id: string) => void;
-  tabIds: React.MutableRefObject<string[]>;
+  tabIds: RefObject<string[]>;
+  /** Stable prefix generated once per Tabs instance — shared by Tab and TabPanel
+   *  so aria-controls / aria-labelledby IDs always match. */
+  instanceId: string;
 }
 
 const TabsContext = createContext<TabsContextValue | null>(null);
@@ -70,6 +74,7 @@ export function Tabs({
   ref,
   ...rest
 }: TabsProps) {
+  const instanceId = useId();
   const tabIds = useRef<string[]>([]);
   const [internalTab, setInternalTab] = useState(defaultTab ?? '');
 
@@ -94,7 +99,7 @@ export function Tabs({
   const classNames = [styles.tabs, className].filter(Boolean).join(' ');
 
   return (
-    <TabsContext value={{ activeTab, setActiveTab, registerTab, tabIds }}>
+    <TabsContext value={{ activeTab, setActiveTab, registerTab, tabIds, instanceId }}>
       <div ref={ref} className={classNames} {...rest}>
         {children}
       </div>
@@ -148,40 +153,55 @@ export interface TabProps extends Omit<HTMLAttributes<HTMLButtonElement>, 'id'> 
  * An individual tab button. Must be a direct child of `<TabList>`.
  *
  * Keyboard navigation:
- * - `ArrowLeft` / `ArrowRight` — move focus between tabs
- * - `Home` — focus first tab
- * - `End` — focus last tab
- * - `Enter` / `Space` — activate focused tab
+ * - `ArrowLeft` / `ArrowRight` — move focus between tabs (skips disabled tabs)
+ * - `Home` — focus first enabled tab
+ * - `End` — focus last enabled tab
+ * - `Enter` / `Space` — activate focused tab (native button behaviour)
  */
 export function Tab({ id, disabled = false, children, className, ref, ...rest }: TabProps) {
-  const { activeTab, setActiveTab, registerTab, tabIds } = useTabsContext();
-  const generatedId = useId();
-  const buttonId = `tab-${id}-${generatedId}`;
-  const panelId = `tabpanel-${id}-${generatedId.replace(/:/g, '')}`;
+  const { activeTab, setActiveTab, registerTab, tabIds, instanceId } = useTabsContext();
 
-  // Register on first render
+  // IDs derived from the shared instanceId so Tab and TabPanel always agree
+  const buttonId = `tab-${instanceId}-${id}`;
+  const panelId = `tabpanel-${instanceId}-${id}`;
+
   registerTab(id);
 
   const isActive = activeTab === id;
   const classNames = [styles.tab, isActive ? styles.active : '', className].filter(Boolean).join(' ');
 
+  const isTabDisabled = (tabId: string) => {
+    const btn = document.querySelector<HTMLButtonElement>(`[data-tab-id="${tabId}"]`);
+    return btn?.disabled ?? false;
+  };
+
   const handleKeyDown = (e: KeyboardEvent<HTMLButtonElement>) => {
     const ids = tabIds.current;
     const currentIndex = ids.indexOf(id);
 
-    let nextIndex: number | null = null;
-    if (e.key === 'ArrowRight') nextIndex = (currentIndex + 1) % ids.length;
-    else if (e.key === 'ArrowLeft') nextIndex = (currentIndex - 1 + ids.length) % ids.length;
-    else if (e.key === 'Home') nextIndex = 0;
-    else if (e.key === 'End') nextIndex = ids.length - 1;
+    const findNext = (startIdx: number, direction: 1 | -1): number | null => {
+      for (let i = 1; i < ids.length; i++) {
+        const idx = (startIdx + direction * i + ids.length) % ids.length;
+        if (!isTabDisabled(ids[idx])) return idx;
+      }
+      return null;
+    };
 
-    if (nextIndex !== null) {
+    let nextIndex: number | null = null;
+    if (e.key === 'ArrowRight') nextIndex = findNext(currentIndex, 1);
+    else if (e.key === 'ArrowLeft') nextIndex = findNext(currentIndex, -1);
+    else if (e.key === 'Home') nextIndex = ids.findIndex((tid) => !isTabDisabled(tid));
+    else if (e.key === 'End') {
+      for (let i = ids.length - 1; i >= 0; i--) {
+        if (!isTabDisabled(ids[i])) { nextIndex = i; break; }
+      }
+    }
+
+    if (nextIndex !== null && nextIndex >= 0) {
       e.preventDefault();
       const nextId = ids[nextIndex];
       setActiveTab(nextId);
-      // Move DOM focus to the next tab button
-      const nextButton = document.querySelector<HTMLButtonElement>(`[data-tab-id="${nextId}"]`);
-      nextButton?.focus();
+      document.querySelector<HTMLButtonElement>(`[data-tab-id="${nextId}"]`)?.focus();
     }
 
     rest.onKeyDown?.(e);
@@ -228,10 +248,11 @@ export interface TabPanelProps extends HTMLAttributes<HTMLDivElement> {
  * ```
  */
 export function TabPanel({ id, children, className, ref, ...rest }: TabPanelProps) {
-  const { activeTab } = useTabsContext();
-  const generatedId = useId();
-  const panelId = `tabpanel-${id}-${generatedId.replace(/:/g, '')}`;
-  const buttonId = `tab-${id}-${generatedId}`;
+  const { activeTab, instanceId } = useTabsContext();
+
+  // IDs derived from the shared instanceId — must mirror what Tab produces
+  const panelId = `tabpanel-${instanceId}-${id}`;
+  const buttonId = `tab-${instanceId}-${id}`;
 
   if (activeTab !== id) return null;
 
@@ -251,3 +272,4 @@ export function TabPanel({ id, children, className, ref, ...rest }: TabPanelProp
     </div>
   );
 }
+

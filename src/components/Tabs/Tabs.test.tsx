@@ -84,6 +84,17 @@ describe('Tabs', () => {
     expect(screen.getByText('Panel A')).toBeInTheDocument();
   });
 
+  it('arrow key navigation skips disabled tabs', async () => {
+    const user = userEvent.setup();
+    render(<SimpleTabs defaultTab="b" />);
+    const tabB = screen.getByRole('tab', { name: 'Tab B' });
+    tabB.focus();
+    // ArrowRight from B would normally go to C (disabled) — should skip to A (wraps)
+    await user.keyboard('{ArrowRight}');
+    expect(screen.getByText('Panel A')).toBeInTheDocument();
+    expect(screen.queryByText('Panel C')).not.toBeInTheDocument();
+  });
+
   it('throws when Tab is used outside Tabs', () => {
     expect(() =>
       render(<Tab id="x">orphan</Tab>),

@@ -64,7 +64,7 @@ export const SelectDriven: Story = {
 };
 
 /**
- * With `keepMounted`, the hidden content stays in the DOM (aria-hidden).
+ * With `keepMounted`, the hidden content stays in the DOM and **animates in/out** smoothly.
  * Useful when you need to preserve controlled state across visibility toggles.
  */
 export const KeepMounted: Story = {
