@@ -20,6 +20,12 @@
   line-height: 1;
   white-space: nowrap;
   pointer-events: none;
+  box-shadow: 0 0 0 2px var(--notification-badge-ring-color, var(--color-surface));
+  animation: badgePing 300ms ease-out;
+
+  @include reduced-motion {
+    animation: none;
+  }
 }
 
 .count {
@@ -38,5 +44,10 @@
 
 .srOnly {
   @include sr-only;
+}
+
+@keyframes badgePing {
+  0% { transform: translate(50%, -50%) scale(1.5); }
+  100% { transform: translate(50%, -50%) scale(1); }
 }
 

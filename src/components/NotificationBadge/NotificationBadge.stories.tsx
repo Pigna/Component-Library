@@ -1,5 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { useState } from 'react';
 import { NotificationBadge } from './NotificationBadge';
+import { Button } from '../Button';
 
 const BellIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -80,5 +82,21 @@ export const AllVariants: Story = {
       </NotificationBadge>
     </div>
   ),
+};
+
+/** Live count increment — watch the badge ping on each update. */
+export const LiveCount: Story = {
+  render: () => {
+    const [count, setCount] = useState(0);
+    return (
+      <div style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
+        <NotificationBadge count={count}>
+          <BellIcon />
+        </NotificationBadge>
+        <Button onClick={() => setCount((c) => c + 1)}>Add notification</Button>
+        <Button onClick={() => setCount(0)}>Clear</Button>
+      </div>
+    );
+  },
 };
 

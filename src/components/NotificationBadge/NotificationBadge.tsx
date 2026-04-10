@@ -53,11 +53,14 @@ export function NotificationBadge({
     .filter(Boolean)
     .join(' ');
 
+  // Changing the key remounts the badge span, restarting the ping animation
+  const badgeKey = dot ? 'dot' : count;
+
   return (
     <span ref={ref} className={wrapperClasses} {...rest}>
       {children}
       {showBadge && (
-        <span className={badgeClasses} aria-label={ariaLabel} role="status">
+        <span key={badgeKey} className={badgeClasses} aria-label={ariaLabel} role="status">
           {!dot && displayText}
           {dot && <span className={styles.srOnly}>New notifications</span>}
         </span>

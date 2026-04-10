@@ -84,6 +84,8 @@ export type { HamburgerMenuProps } from './components/HamburgerMenu';
 
 export { NotificationPopup } from './components/NotificationPopup';
 export type { NotificationPopupProps, NotificationVariant } from './components/NotificationPopup';
+export { NotificationToastContainer } from './components/NotificationPopup';
+export type { NotificationToastContainerProps } from './components/NotificationPopup';
 
 /* --- Data Display --- */
 export { Table } from './components/Table';

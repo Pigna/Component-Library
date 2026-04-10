@@ -1,9 +1,7 @@
 @use '../../styles/mixins' as *;
 
 .popup {
-  position: fixed;
-  bottom: var(--space-4);
-  right: var(--space-4);
+  position: relative;
   display: flex;
   align-items: flex-start;
   gap: var(--space-3);
@@ -14,8 +12,8 @@
   box-shadow: var(--shadow-lg);
   font-family: var(--font-family);
   font-size: var(--font-size-sm);
-  z-index: var(--z-index-notification);
-  max-width: min(24rem, calc(100vw - var(--space-8)));
+  overflow: hidden;
+  max-height: 300px; /* upper-bound enables max-height transition in .leaving */
   animation: slideIn 250ms ease-out;
 
   @include reduced-motion {
@@ -23,14 +21,26 @@
   }
 
   @media (max-width: 479px) {
-    top: 0;
-    bottom: auto;
-    left: 0;
-    right: 0;
-    max-width: none;
     border-radius: 0;
     border-left: none;
     border-bottom: 4px solid transparent;
+  }
+}
+
+.leaving {
+  animation: slideOut 250ms ease-in forwards;
+  /* Collapse height so remaining toasts slide into place rather than snapping */
+  max-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  transition:
+    max-height 250ms ease-in,
+    padding 250ms ease-in;
+
+  @include reduced-motion {
+    animation: none;
+    opacity: 0;
+    transition: opacity 150ms ease;
   }
 }
 
@@ -62,12 +72,27 @@
   margin-left: auto;
 }
 
+.progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  transform-origin: left;
+  animation: progressDrain linear forwards;
+
+  @include reduced-motion {
+    display: none;
+  }
+}
+
 /* Variants */
 
 .info {
   border-left-color: var(--color-info);
 
   .icon { color: var(--color-info); }
+  .progress { background-color: var(--color-info); }
 
   @media (max-width: 479px) {
     border-bottom-color: var(--color-info);
@@ -78,6 +103,7 @@
   border-left-color: var(--color-success);
 
   .icon { color: var(--color-success); }
+  .progress { background-color: var(--color-success); }
 
   @media (max-width: 479px) {
     border-bottom-color: var(--color-success);
@@ -88,6 +114,7 @@
   border-left-color: var(--color-warning);
 
   .icon { color: var(--color-warning); }
+  .progress { background-color: var(--color-warning); }
 
   @media (max-width: 479px) {
     border-bottom-color: var(--color-warning);
@@ -98,6 +125,7 @@
   border-left-color: var(--color-error);
 
   .icon { color: var(--color-error); }
+  .progress { background-color: var(--color-error); }
 
   @media (max-width: 479px) {
     border-bottom-color: var(--color-error);
@@ -114,5 +142,22 @@
     transform: translateX(0);
     opacity: 1;
   }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes progressDrain {
+  from { transform: scaleX(1); }
+  to { transform: scaleX(0); }
 }
 
