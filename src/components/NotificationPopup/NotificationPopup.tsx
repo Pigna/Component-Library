@@ -1,4 +1,5 @@
 import { type HTMLAttributes, type ReactNode, type Ref, useEffect, useRef, useCallback, useState } from 'react';
+
 import { CloseButton } from '../CloseButton';
 import { ErrorIcon, InfoIcon, SuccessIcon, WarningIcon } from '../../icons';
 import type { NotificationPopupLabels } from '../../labels';
@@ -82,18 +83,18 @@ export function NotificationPopup({
 
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pausedRef = useRef(false);
-  const prevVisibleRef = useRef(visible);
 
   const [paused, setPaused] = useState(false);
   const [mounted, setMounted] = useState(visible);
   const [leaving, setLeaving] = useState(false);
   const [progressKey, setProgressKey] = useState(0);
+  const [prevVisible, setPrevVisible] = useState(visible);
 
   // Derive mount/leave state from the `visible` prop during render.
   // Calling setState here uses React's "update during render" pattern: React immediately
   // discards the current output and retries — no cascading renders, no effect involvement.
-  if (prevVisibleRef.current !== visible) {
-    prevVisibleRef.current = visible;
+  if (prevVisible !== visible) {
+    setPrevVisible(visible);
     if (visible) {
       if (!mounted) setMounted(true);
       if (leaving) setLeaving(false);

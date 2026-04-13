@@ -149,12 +149,14 @@ export function Table<T extends Record<string, unknown> = Record<string, unknown
   onRowClick,
   className,
   ref,
-  onKeyDown,
   labels,
   ...rest
 }: TableProps<T>) {
   const ctx = useComponentLibraryStrings();
-  const l = { ...DEFAULT_TABLE_LABELS, ...ctx.table, ...labels };
+  const l = useMemo(
+    () => ({ ...DEFAULT_TABLE_LABELS, ...ctx.table, ...labels }),
+    [ctx.table, labels],
+  );
 
   const [sortKey, setSortKey] = useState<string | null>(null);
   const [sortDir, setSortDir] = useState<SortDirection>('none');
@@ -220,7 +222,7 @@ export function Table<T extends Record<string, unknown> = Record<string, unknown
         setAnnouncement('');
       }
     },
-    [data, columns],
+    [data, columns, l],
   );
 
   /* Row interaction — selection toggle + optional onRowClick callback */
@@ -235,7 +237,7 @@ export function Table<T extends Record<string, unknown> = Record<string, unknown
       }
       onRowClick?.(row, globalIdx);
     },
-    [selectable, onRowClick],
+    [selectable, onRowClick, l.rowSelected, l.selectionCleared],
   );
 
   const handleRowKeyDown = useCallback(
@@ -248,16 +250,15 @@ export function Table<T extends Record<string, unknown> = Record<string, unknown
     [handleRowInteraction],
   );
 
-  /* Escape on the wrapper clears row selection */
-  const handleWrapperKeyDown = useCallback(
-    (e: KeyboardEvent<HTMLDivElement>) => {
+  /* Escape on the table clears row selection */
+  const handleTableKeyDown = useCallback(
+    (e: KeyboardEvent<HTMLTableElement>) => {
       if (e.key === 'Escape' && selectedRow !== null) {
         setSelectedRow(null);
         setAnnouncement(l.selectionCleared);
       }
-      onKeyDown?.(e);
     },
-    [selectedRow, onKeyDown],
+    [selectedRow, l.selectionCleared],
   );
 
   /* Resize handler */
@@ -298,8 +299,12 @@ export function Table<T extends Record<string, unknown> = Record<string, unknown
     ...(headerTextColor ? { '--table-header-color': headerTextColor } : {}),
   } as CSSProperties;
 
+  const tableInteractionProps = selectable
+    ? { role: 'grid' as const, onKeyDown: handleTableKeyDown }
+    : {};
+
   return (
-    <div ref={ref} className={classNames} onKeyDown={handleWrapperKeyDown} {...rest}>
+    <div ref={ref} className={classNames} {...rest}>
       {/* Screen reader live region for search results and selection state */}
       <div
         id={liveRegionId}
@@ -340,7 +345,7 @@ export function Table<T extends Record<string, unknown> = Record<string, unknown
             .join(' ')}
           style={tableStyle}
           aria-busy={loading || undefined}
-          role={selectable ? 'grid' : undefined}
+          {...tableInteractionProps}
         >
           {caption && <caption className={styles.caption}>{caption}</caption>}
           <thead className={styles.thead}>
