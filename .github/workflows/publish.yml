@@ -6,7 +6,7 @@ on:
       - 'v*'
 
 permissions:
-  contents: read
+  contents: write
   packages: write
 
 jobs:
@@ -15,12 +15,12 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: '22'
+          node-version: 22
           registry-url: 'https://npm.pkg.github.com'
           cache: 'npm'
 
@@ -50,4 +50,19 @@ jobs:
         run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create release archive
+        run: |
+          STAGE="pigna-component-library-${{ steps.version.outputs.VERSION }}"
+          mkdir "$STAGE"
+          cp -r dist "$STAGE/dist"
+          cp package.json "$STAGE/package.json"
+          cp README.md "$STAGE/README.md"
+          cp LICENSE "$STAGE/LICENSE"
+          zip -r "$STAGE.zip" "$STAGE"
+
+      - name: Create GitHub Release
+        run: gh release create "${{ github.ref_name }}" pigna-component-library-${{ steps.version.outputs.VERSION }}.zip --title "v${{ steps.version.outputs.VERSION }}" --generate-notes
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

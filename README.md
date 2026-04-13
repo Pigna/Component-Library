@@ -154,7 +154,13 @@ Runs automatically on every **push to `main`** and on **pull requests** targetin
 
 ### Publishing (`.github/workflows/publish.yml`)
 
-Runs when you push a **version tag** (e.g. `v0.2.0`). The version in `package.json` is set automatically from the tag name — no need to update it manually. The package is published to **GitHub Packages**.
+Runs when you push a **version tag** (e.g. `v0.2.0`). The version in `package.json` is set automatically from the tag name — no need to update it manually. The workflow will:
+
+1. Lint, test, and build the library
+2. Publish the package to **GitHub Packages**
+3. Create a **GitHub Release** with a consumer-ready ZIP (`pigna-component-library-<version>.zip`) containing `dist/`, `package.json`, `README.md`, and `LICENSE`
+
+> **Note:** The repo `README.md` is for contributors. The consumer-facing readme lives in `PACKAGE.md` and is copied into the npm package and release ZIP at publish time.
 
 To publish a new version:
 
