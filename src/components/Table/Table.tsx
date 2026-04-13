@@ -9,62 +9,39 @@ import {
   useCallback,
   useId,
 } from 'react';
+import type { TableLabels } from '../../labels';
+import { useComponentLibraryStrings } from '../../providers';
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  SortAscIcon,
+  SortDescIcon,
+  SortNeutralIcon,
+  WarningIcon,
+} from '../../icons';
 import styles from './Table.module.scss';
 
-/* ---- SVG Icons ---- */
+const DEFAULT_TABLE_LABELS: Required<TableLabels> = {
+  searchAriaLabel: 'Search table',
+  paginationAriaLabel: 'Table pagination',
+  previousPageText: 'Previous',
+  previousPageAriaLabel: 'Previous page',
+  nextPageText: 'Next',
+  nextPageAriaLabel: 'Next page',
+  sortByAriaLabel: (col) => `Sort by ${col}`,
+  resizeColumnAriaLabel: (col) => `Resize ${col} column`,
+  resultCount: (n) => `${n} result${n !== 1 ? 's' : ''}`,
+  resultsFound: (n) => `${n} result${n !== 1 ? 's' : ''} found`,
+  rowSelected: 'Row selected',
+  selectionCleared: 'Selection cleared',
+  searchCleared: 'Search cleared',
+  noResults: (q) => `No results for \u201c${q}\u201d.`,
+  clearSearch: 'Clear search',
+  noData: 'No data found.',
+  showingRange: (start, end, total) => `Showing ${start}\u2013${end} of ${total}`,
+  pageOf: (page, total) => `Page ${page} of ${total}`,
+};
 
-function SortNeutralIcon() {
-  return (
-    <svg aria-hidden="true" focusable="false" width="10" height="12" viewBox="0 0 10 12" fill="none">
-      <path d="M5 1L2 4.5H8L5 1Z" fill="currentColor" opacity="0.4" />
-      <path d="M5 11L8 7.5H2L5 11Z" fill="currentColor" opacity="0.4" />
-    </svg>
-  );
-}
-
-function SortAscIcon() {
-  return (
-    <svg aria-hidden="true" focusable="false" width="10" height="12" viewBox="0 0 10 12" fill="none">
-      <path d="M5 1L2 4.5H8L5 1Z" fill="currentColor" />
-      <path d="M5 11L8 7.5H2L5 11Z" fill="currentColor" opacity="0.3" />
-    </svg>
-  );
-}
-
-function SortDescIcon() {
-  return (
-    <svg aria-hidden="true" focusable="false" width="10" height="12" viewBox="0 0 10 12" fill="none">
-      <path d="M5 1L2 4.5H8L5 1Z" fill="currentColor" opacity="0.3" />
-      <path d="M5 11L8 7.5H2L5 11Z" fill="currentColor" />
-    </svg>
-  );
-}
-
-function ChevronLeftIcon() {
-  return (
-    <svg aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 16 16" fill="none">
-      <path d="M10 4L6 8L10 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function ChevronRightIcon() {
-  return (
-    <svg aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 16 16" fill="none">
-      <path d="M6 4L10 8L6 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
-function WarningIcon() {
-  return (
-    <svg aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 16 16" fill="none">
-      <path d="M8 2L14.5 13H1.5L8 2Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
-      <path d="M8 6.5V9.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-      <circle cx="8" cy="11.5" r="0.75" fill="currentColor" />
-    </svg>
-  );
-}
 
 /* ---- Types ---- */
 
@@ -124,6 +101,11 @@ export interface TableProps<T = Record<string, unknown>> extends HTMLAttributes<
   error?: ReactNode;
   /** Called when any row is clicked or activated. Does not require selectable. */
   onRowClick?: (row: T, index: number) => void;
+  /**
+   * Override individual translatable strings inside the table.
+   * Values set here take priority over any `<ComponentLibraryProvider strings>` defaults.
+   */
+  labels?: TableLabels;
 }
 
 /**
@@ -168,8 +150,12 @@ export function Table<T extends Record<string, unknown> = Record<string, unknown
   className,
   ref,
   onKeyDown,
+  labels,
   ...rest
 }: TableProps<T>) {
+  const ctx = useComponentLibraryStrings();
+  const l = { ...DEFAULT_TABLE_LABELS, ...ctx.table, ...labels };
+
   const [sortKey, setSortKey] = useState<string | null>(null);
   const [sortDir, setSortDir] = useState<SortDirection>('none');
   const [search, setSearch] = useState('');
@@ -229,7 +215,7 @@ export function Table<T extends Record<string, unknown> = Record<string, unknown
         const count = data.filter((row) =>
           columns.some((col) => String(row[col.key] ?? '').toLowerCase().includes(q)),
         ).length;
-        setAnnouncement(`${count} result${count !== 1 ? 's' : ''} found`);
+        setAnnouncement(l.resultsFound(count));
       } else {
         setAnnouncement('');
       }
@@ -243,7 +229,7 @@ export function Table<T extends Record<string, unknown> = Record<string, unknown
       if (selectable) {
         setSelectedRow((prev) => {
           const next = prev === globalIdx ? null : globalIdx;
-          setAnnouncement(next !== null ? 'Row selected' : 'Selection cleared');
+          setAnnouncement(next !== null ? l.rowSelected : l.selectionCleared);
           return next;
         });
       }
@@ -267,7 +253,7 @@ export function Table<T extends Record<string, unknown> = Record<string, unknown
     (e: KeyboardEvent<HTMLDivElement>) => {
       if (e.key === 'Escape' && selectedRow !== null) {
         setSelectedRow(null);
-        setAnnouncement('Selection cleared');
+        setAnnouncement(l.selectionCleared);
       }
       onKeyDown?.(e);
     },
@@ -329,7 +315,7 @@ export function Table<T extends Record<string, unknown> = Record<string, unknown
         <div className={styles.toolbar}>
           {search.trim() && (
             <span className={styles.resultCount}>
-              {sorted.length} {sorted.length === 1 ? 'result' : 'results'}
+              {l.resultCount(sorted.length)}
             </span>
           )}
           <input
@@ -338,7 +324,7 @@ export function Table<T extends Record<string, unknown> = Record<string, unknown
             placeholder={searchPlaceholder}
             value={search}
             onChange={(e) => handleSearch(e.target.value)}
-            aria-label="Search table"
+            aria-label={l.searchAriaLabel}
           />
         </div>
       )}
@@ -375,7 +361,7 @@ export function Table<T extends Record<string, unknown> = Record<string, unknown
                         type="button"
                         className={styles.sortButton}
                         onClick={() => handleSort(col.key)}
-                        aria-label={`Sort by ${col.label}`}
+                        aria-label={l.sortByAriaLabel(col.label)}
                       >
                         {col.label}
                         <span className={styles.sortIcon}>
@@ -396,7 +382,7 @@ export function Table<T extends Record<string, unknown> = Record<string, unknown
                     <button
                       type="button"
                       className={styles.resizeHandle}
-                      aria-label={`Resize ${col.label} column`}
+                      aria-label={l.resizeColumnAriaLabel(col.label)}
                       tabIndex={-1}
                       onClick={(e) => e.preventDefault()}
                       onMouseDown={(e) => {
@@ -432,21 +418,21 @@ export function Table<T extends Record<string, unknown> = Record<string, unknown
                     </span>
                   ) : search.trim() ? (
                     <>
-                      No results for &ldquo;{search}&rdquo;.{' '}
+                      {l.noResults(search)}{' '}
                       <button
                         type="button"
                         className={styles.clearSearchButton}
                         onClick={() => {
                           setSearch('');
                           setPage(0);
-                          setAnnouncement('Search cleared');
+                          setAnnouncement(l.searchCleared);
                         }}
                       >
-                        Clear search
+                        {l.clearSearch}
                       </button>
                     </>
                   ) : (
-                    'No data found.'
+                    l.noData
                   )}
                 </td>
               </tr>
@@ -492,32 +478,32 @@ export function Table<T extends Record<string, unknown> = Record<string, unknown
       </div>
 
       {paginated && totalPages > 1 && (
-        <nav className={styles.pagination} aria-label="Table pagination">
+        <nav className={styles.pagination} aria-label={l.paginationAriaLabel}>
           <button
             type="button"
             className={styles.pageButton}
             disabled={page <= 0}
             onClick={() => setPage((p) => p - 1)}
-            aria-label="Previous page"
+            aria-label={l.previousPageAriaLabel}
           >
             <ChevronLeftIcon />
-            Previous
+            {l.previousPageText}
           </button>
           <span className={styles.pageInfo}>
             <span className={styles.showingInfo}>
-              Showing {showingStart}–{showingEnd} of {sorted.length}
+              {l.showingRange(showingStart, showingEnd, sorted.length)}
             </span>
             <span aria-hidden="true">·</span>
-            <span>Page {page + 1} of {totalPages}</span>
+            <span>{l.pageOf(page + 1, totalPages)}</span>
           </span>
           <button
             type="button"
             className={styles.pageButton}
             disabled={page >= totalPages - 1}
             onClick={() => setPage((p) => p + 1)}
-            aria-label="Next page"
+            aria-label={l.nextPageAriaLabel}
           >
-            Next
+            {l.nextPageText}
             <ChevronRightIcon />
           </button>
         </nav>

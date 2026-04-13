@@ -1,4 +1,5 @@
 import type { ButtonHTMLAttributes, Ref } from 'react';
+import { CloseIcon } from '../../icons';
 import styles from './CloseButton.module.scss';
 
 export type CloseButtonSize = 'sm' | 'md' | 'lg';
@@ -38,19 +39,7 @@ export function CloseButton({
       aria-label={ariaLabel}
       {...rest}
     >
-      <svg
-        className={styles.icon}
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        aria-hidden="true"
-      >
-        <line x1="18" y1="6" x2="6" y2="18" />
-        <line x1="6" y1="6" x2="18" y2="18" />
-      </svg>
+      <CloseIcon className={styles.icon} />
     </button>
   );
 }

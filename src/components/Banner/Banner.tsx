@@ -1,9 +1,16 @@
 import type { HTMLAttributes, ReactNode, Ref } from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { CloseButton } from '../CloseButton';
+import { ErrorIcon, InfoIcon, SuccessIcon, WarningIcon } from '../../icons';
+import type { BannerLabels } from '../../labels';
+import { useComponentLibraryStrings } from '../../providers';
 import styles from './Banner.module.scss';
 
 export type BannerVariant = 'info' | 'warning' | 'error' | 'success';
+
+const DEFAULT_BANNER_LABELS: Required<BannerLabels> = {
+  dismissAriaLabel: 'Dismiss banner',
+};
 
 export interface BannerProps extends HTMLAttributes<HTMLDivElement> {
   /** Ref forwarded to the container `<div>`. */
@@ -20,38 +27,19 @@ export interface BannerProps extends HTMLAttributes<HTMLDivElement> {
   onDismiss?: () => void;
   /** Banner content. */
   children: ReactNode;
+  /**
+   * Override individual translatable strings inside the banner.
+   * Values set here take priority over any `<ComponentLibraryProvider strings>` defaults.
+   */
+  labels?: BannerLabels;
 }
 
 /** Inline SVG icons — consistent rendering across every platform and font stack. */
 const variantIcons: Record<BannerVariant, ReactNode> = {
-  info: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <circle cx="12" cy="12" r="10" />
-      <path d="M12 16v-4" />
-      <path d="M12 8h.01" />
-    </svg>
-  ),
-  warning: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
-      <line x1="12" y1="9" x2="12" y2="13" />
-      <line x1="12" y1="17" x2="12.01" y2="17" />
-    </svg>
-  ),
-  // Octagon — visually distinct from the × close button.
-  error: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2" />
-      <line x1="12" y1="8" x2="12" y2="12" />
-      <line x1="12" y1="16" x2="12.01" y2="16" />
-    </svg>
-  ),
-  success: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <circle cx="12" cy="12" r="10" />
-      <path d="m9 12 2 2 4-4" />
-    </svg>
-  ),
+  info: <InfoIcon />,
+  warning: <WarningIcon />,
+  error: <ErrorIcon />,
+  success: <SuccessIcon />,
 };
 
 /** Duration matches `--transition-normal` (250 ms). */
@@ -81,8 +69,12 @@ export function Banner({
   children,
   className,
   ref,
+  labels,
   ...rest
 }: BannerProps) {
+  const ctx = useComponentLibraryStrings();
+  const l = { ...DEFAULT_BANNER_LABELS, ...ctx.banner, ...labels };
+
   const [dismissing, setDismissing] = useState(false);
   const [dismissed, setDismissed] = useState(false);
 
@@ -123,7 +115,7 @@ export function Banner({
       {dismissible && (
         <CloseButton
           size="sm"
-          aria-label="Dismiss banner"
+          aria-label={l.dismissAriaLabel}
           onClick={() => setDismissing(true)}
           className={styles.dismiss}
         />

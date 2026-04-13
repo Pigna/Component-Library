@@ -1,4 +1,5 @@
 import {type HTMLAttributes, type ReactNode, type Ref, useCallback, useContext, useEffect, useState} from 'react';
+import { ChevronLeftIcon } from '../../icons';
 import styles from './SideMenu.module.scss';
 import { SideMenuContext } from './SideMenuContext';
 import { HamburgerMenuContext } from '../HamburgerMenu/HamburgerMenuContext';
@@ -89,20 +90,9 @@ export function SideMenu({
             aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
             title={isCollapsed ? 'Expand' : 'Collapse'}
           >
-            <svg
-              viewBox="0 0 24 24"
-              width="16"
-              height="16"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
+            <ChevronLeftIcon
               className={isCollapsed ? styles.chevronRight : styles.chevronLeft}
-            >
-              <polyline points="15 18 9 12 15 6" />
-            </svg>
+            />
           </button>
         )}
         <ul className={styles.list}>

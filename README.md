@@ -53,8 +53,8 @@ The library supports three theming modes:
 **2. Manual override** — Set `data-theme` on `<html>` to force a specific theme:
 
 ```html
-<html data-theme="dark">   <!-- Force dark -->
-<html data-theme="light">  <!-- Force light -->
+<html data-theme="dark" lang="en-GB">   <!-- Force dark -->
+<html data-theme="light" lang="en-GB">  <!-- Force light -->
 ```
 
 **3. JavaScript toggle:**

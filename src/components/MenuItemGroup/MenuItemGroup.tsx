@@ -1,5 +1,6 @@
 import { type HTMLAttributes, type ReactNode, type Ref, useState, useId, useRef, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
+import { ChevronRightIcon, FolderIcon } from '../../icons';
 import styles from './MenuItemGroup.module.scss';
 import { useSideMenu, SideMenuContext } from '../SideMenu/SideMenuContext';
 
@@ -18,24 +19,6 @@ export interface MenuItemGroupProps extends HTMLAttributes<HTMLDivElement> {
   children: ReactNode;
 }
 
-/** Generic fallback icon rendered when the group has no icon and sidebar is collapsed. */
-function FallbackGroupIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      width="16"
-      height="16"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
-    </svg>
-  );
-}
 
 /**
  * Collapsible group of MenuItems with a label/header.
@@ -137,7 +120,7 @@ export function MenuItemGroup({
           onBlur={closeFlyout}
         >
           <span className={styles.icon} aria-hidden="true">
-            {icon ?? <FallbackGroupIcon />}
+            {icon ?? <FolderIcon />}
           </span>
         </button>
 
@@ -177,20 +160,11 @@ export function MenuItemGroup({
         >
           {icon && <span className={styles.icon} aria-hidden="true">{icon}</span>}
           <span className={styles.triggerLabel}>{label}</span>
-          <svg
+          <ChevronRightIcon
             className={[styles.chevron, isOpen ? styles.chevronOpen : ''].filter(Boolean).join(' ')}
-            viewBox="0 0 24 24"
             width="14"
             height="14"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden="true"
-          >
-            <polyline points="9 18 15 12 9 6" />
-          </svg>
+          />
         </button>
       ) : (
         <span id={triggerId} className={styles.staticLabel}>

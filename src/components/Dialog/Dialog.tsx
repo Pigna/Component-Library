@@ -11,7 +11,13 @@ import {
 } from 'react';
 import { CloseButton } from '../CloseButton';
 import { Button } from '../Button';
+import type { DialogLabels } from '../../labels';
+import { useComponentLibraryStrings } from '../../providers';
 import styles from './Dialog.module.scss';
+
+const DEFAULT_DIALOG_LABELS: Required<DialogLabels> = {
+  closeButtonAriaLabel: 'Close dialog',
+};
 
 export interface DialogProps extends Omit<HTMLAttributes<HTMLDialogElement>, 'title'> {
   /** Ref forwarded to the native `<dialog>`. */
@@ -34,6 +40,11 @@ export interface DialogProps extends Omit<HTMLAttributes<HTMLDialogElement>, 'ti
   onCancel?: () => void;
   /** Hide the confirm/cancel footer entirely. */
   hideActions?: boolean;
+  /**
+   * Override individual translatable strings inside the dialog.
+   * Values set here take priority over any `<ComponentLibraryProvider strings>` defaults.
+   */
+  labels?: DialogLabels;
 }
 
 /**
@@ -59,8 +70,11 @@ export function Dialog({
   hideActions = false,
   className,
   ref,
+  labels,
   ...rest
 }: DialogProps) {
+  const ctx = useComponentLibraryStrings();
+  const l = { ...DEFAULT_DIALOG_LABELS, ...ctx.dialog, ...labels };
   const internalRef = useRef<HTMLDialogElement | null>(null);
 
   const setRef = useCallback(
@@ -137,7 +151,7 @@ export function Dialog({
           </h2>
           <CloseButton
             size="sm"
-            aria-label="Close dialog"
+            aria-label={l.closeButtonAriaLabel}
             onClick={onClose}
           />
         </header>

@@ -7,6 +7,37 @@
    import '@pigna/component-library/styles';
    ========================================================================== */
 
+/* --- Localization Provider --- */
+export { ComponentLibraryProvider } from './providers';
+export type {
+  ComponentLibraryProviderProps,
+  ComponentLibraryStrings,
+} from './providers';
+export type {
+  DialogLabels,
+  BannerLabels,
+  NotificationPopupLabels,
+  TableLabels,
+} from './labels';
+
+/* --- Icons --- */
+export {
+  ChevronDownIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  CloseIcon,
+  ErrorIcon,
+  FolderIcon,
+  HamburgerIcon,
+  InfoIcon,
+  SortAscIcon,
+  SortDescIcon,
+  SortNeutralIcon,
+  SuccessIcon,
+  WarningIcon,
+} from './icons';
+export type { IconProps } from './icons';
+
 /* --- Components --- */
 export { Button } from './components/Button';
 export type { ButtonProps, ButtonVariant, ButtonSize } from './components/Button';
