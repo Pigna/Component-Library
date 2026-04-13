@@ -144,6 +144,59 @@ export type { ButtonProps } from './components/Button';
 | `npm run format` | Format code with Prettier |
 | `npm run format:check` | Check formatting without writing |
 
+## CI/CD
+
+This project uses GitHub Actions for continuous integration and publishing.
+
+### CI (`.github/workflows/ci.yml`)
+
+Runs automatically on every **push to `main`** and on **pull requests** targeting `main`. It runs lint, tests, and build to catch issues early.
+
+### Publishing (`.github/workflows/publish.yml`)
+
+Runs when you push a **version tag** (e.g. `v0.2.0`). The version in `package.json` is set automatically from the tag name — no need to update it manually. The package is published to **GitHub Packages**.
+
+To publish a new version:
+
+```bash
+git tag v0.2.0
+git push origin v0.2.0
+```
+
+## Installing in a Consuming Project
+
+Since this package is hosted on GitHub Packages, the consuming project needs a one-time setup.
+
+### 1. Create a GitHub Personal Access Token
+
+Go to [GitHub → Settings → Developer settings → Personal access tokens](https://github.com/settings/tokens) and create a **classic** token with the **`read:packages`** scope.
+
+### 2. Add a `.npmrc` to the consuming project root
+
+```ini
+@pigna:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken=${NPM_TOKEN}
+```
+
+> **Do not commit a real token.** The `.npmrc` references an environment variable (`NPM_TOKEN`).
+
+### 3. Set the token
+
+- **Locally:** export the token in your shell before running `npm install`:
+  ```bash
+  export NPM_TOKEN=ghp_your_token_here   # macOS/Linux
+  $env:NPM_TOKEN="ghp_your_token_here"   # PowerShell
+  ```
+  Alternatively, add the token to your **user-level** `~/.npmrc` so it applies globally without polluting the project.
+
+- **In CI:** add `NPM_TOKEN` as a **repository secret** in the consuming project's GitHub settings. Then pass it as an environment variable in your workflow.
+
+### 4. Install the package
+
+```bash
+npm install @pigna/component-library
+```
+
 ## Other tools
 - ```npx skills add pbakaus/impeccable``` - Styling tool by **pbakaus/impeccable** https://impeccable.style/
 
