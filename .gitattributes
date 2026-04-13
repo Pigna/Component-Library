@@ -1,0 +1,57 @@
+# Exclude development-only files and folders from Git release archives (git archive / GitHub ZIP).
+# These are not needed by consumers of the package.
+
+# AI / agent tooling
+.agents/          export-ignore
+.claude/          export-ignore
+
+# GitHub config (CI, Copilot instructions)
+.github/          export-ignore
+
+# Storybook
+.storybook/       export-ignore
+
+# Editor / IDE config
+.editorconfig     export-ignore
+.idea/            export-ignore
+
+# Linting, formatting, styling config
+.prettierignore   export-ignore
+.prettierrc       export-ignore
+.stylelintrc.json export-ignore
+eslint.config.js  export-ignore
+
+# Impeccable styling tool
+.impeccable.md    export-ignore
+
+# npm config (consumers have their own)
+.npmrc            export-ignore
+package-lock.json export-ignore
+
+# Git config
+.gitignore        export-ignore
+.gitattributes    export-ignore
+
+# Source code (consumers use the built dist/)
+src/              export-ignore
+
+# TypeScript config (only needed for development)
+tsconfig.json     export-ignore
+tsconfig.app.json export-ignore
+tsconfig.node.json export-ignore
+tsconfig.test.json export-ignore
+
+# Build tool config
+vite.config.ts    export-ignore
+vitest.config.ts  export-ignore
+
+# Skills / lock files
+skills-lock.json  export-ignore
+
+# Component documentation (not needed for consumption)
+COMPONENTS.md     export-ignore
+
+# Repo README (PACKAGE.md is the consumer-facing readme)
+README.md         export-ignore
+
+
